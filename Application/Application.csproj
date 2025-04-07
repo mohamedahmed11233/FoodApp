@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Dtos\" />
-    <Folder Include="Service\" />
+    <Folder Include="Service\NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

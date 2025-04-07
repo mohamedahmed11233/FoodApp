@@ -1,3 +1,6 @@
+using Hotel_Reservation_System.Middleware;
+using Presentation.ExtensionMethods;
+
 
 namespace Presentation
 {
@@ -8,11 +11,7 @@ namespace Presentation
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddDependencyInjectionMethods(builder.Configuration);
 
             var app = builder.Build();
 
@@ -22,7 +21,8 @@ namespace Presentation
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<GlobalTransactionMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
