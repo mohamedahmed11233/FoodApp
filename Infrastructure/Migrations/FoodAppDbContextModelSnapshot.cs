@@ -103,12 +103,17 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Models.Recipe", b =>
                 {
                     b.HasOne("Domain.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("recipes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Domain.Models.Category", b =>
+                {
+                    b.Navigation("recipes");
                 });
 #pragma warning restore 612, 618
         }

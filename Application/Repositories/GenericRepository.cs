@@ -27,6 +27,7 @@ namespace Domain.Repositories
 
         }
 
+     
         public async Task DeleteAsync(T item)
         {
 
@@ -36,12 +37,12 @@ namespace Domain.Repositories
 
         public Task<IEnumerable<T>> GetAllAsync()
         {
-            return Task.FromResult(_dbSet.AsNoTracking().ToList() as IEnumerable<T>);
+            return Task.FromResult(_dbSet.AsNoTracking().AsEnumerable());
         }
 
-        public Task<IQueryable<T>> GetAllWithSpecAsync(Expression<Func<T, bool>> criteria)
+        public async Task<IQueryable<T>> GetAllWithSpecAsync(Expression<Func<T, object>> criteria)
         {
-            return Task.FromResult(_dbSet.AsNoTracking().Where(criteria).AsQueryable());
+            return (IQueryable<T>)await Task.FromResult(_dbSet.AsNoTracking().Select(criteria).AsQueryable());
         }
 
         public async Task<T> GetByIdAsync(int id)

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(FoodAppDbContext))]
-    [Migration("20250407230307_Init")]
-    partial class Init
+    [Migration("20250408182755_CategoryMod")]
+    partial class CategoryMod
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,12 +106,17 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Models.Recipe", b =>
                 {
                     b.HasOne("Domain.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("recipes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Domain.Models.Category", b =>
+                {
+                    b.Navigation("recipes");
                 });
 #pragma warning restore 612, 618
         }

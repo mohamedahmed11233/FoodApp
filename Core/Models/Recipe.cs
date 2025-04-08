@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +16,7 @@ namespace Domain.Models
         public int Quantity { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
         public decimal Discount { get; set; } = 0.0m;
-        public Category Category { get; set; }
+        public Category Category { get; set; } = new Category();
     }
     
 

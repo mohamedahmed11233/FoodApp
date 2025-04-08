@@ -1,6 +1,12 @@
-﻿using Hotel_Reservation_System.Error;
+﻿using Application.IRepositories;
+using Application.Repositories;
+using Application.Service;
+using Domain.IRepositories;
+using Domain.Repositories;
+using Hotel_Reservation_System.Error;
 using Hotel_Reservation_System.Middleware;
 using Infrastructure.Context;
+using Infrastructure.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +23,9 @@ namespace Presentation.ExtensionMethods
             Services.AddScoped<GlobalTransactionMiddleware>();
             Services.AddDbContext<FoodAppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
+            Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            Services.AddScoped<IRecipeService, RecipeService>();
             #region ApiValidationErrorr
             Services.Configure<ApiBehaviorOptions>(opthion =>
             {
@@ -35,6 +43,7 @@ namespace Presentation.ExtensionMethods
                 };
             });
             #endregion
+            Services.AddAutoMapper(typeof(MappingProfile.Mapping));
             return Services;
         }
     }
