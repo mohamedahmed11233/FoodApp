@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Repositories
+namespace Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
@@ -40,9 +40,9 @@ namespace Domain.Repositories
             return Task.FromResult(_dbSet.AsNoTracking().AsEnumerable());
         }
 
-        public async Task<IQueryable<T>> GetAllWithSpecAsync(Expression<Func<T, object>> criteria)
+        public async Task<IQueryable<T>> GetAllWithSpecAsync(Expression<Func<T, bool>> criteria)
         {
-            return (IQueryable<T>)await Task.FromResult(_dbSet.AsNoTracking().Select(criteria).AsQueryable());
+            return await Task.FromResult(_dbSet.AsNoTracking().Where(criteria).AsQueryable());
         }
 
         public async Task<T> GetByIdAsync(int id)

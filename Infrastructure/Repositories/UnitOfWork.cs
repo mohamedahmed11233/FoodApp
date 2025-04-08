@@ -1,8 +1,8 @@
 ﻿using Application.IRepositories;
 using Domain.Models;
-using Domain.Repositories;
 using Infrastructure.Context;
 using Infrastructure.IRepositories;
+using Infrastructure.Repositories;
 using System;
 using System.Collections;
 using System.Collections.Generic;

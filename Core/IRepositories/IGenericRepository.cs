@@ -13,7 +13,7 @@ namespace Infrastructure.IRepositories
         Task<IEnumerable<T>> GetAllAsync();
         Task AddAsync(T entity);
         Task DeleteAsync(T item);
-        public Task<IQueryable<T>> GetAllWithSpecAsync(Expression<Func<T, object>> criteria);
+        public Task<IQueryable<T>> GetAllWithSpecAsync(Expression<Func<T, bool>> criteria);
         public Task<T> GetBySpecAsync(Expression<Func<T, bool>> criteria);
         public Task UpdateInclude(T entity, params string[] modifiedProperties);
 

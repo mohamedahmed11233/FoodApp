@@ -2,11 +2,11 @@
 using Application.Repositories;
 using Application.Service;
 using Domain.IRepositories;
-using Domain.Repositories;
 using Hotel_Reservation_System.Error;
 using Hotel_Reservation_System.Middleware;
 using Infrastructure.Context;
 using Infrastructure.IRepositories;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
