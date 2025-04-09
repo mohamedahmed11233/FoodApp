@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.IRepositories
+namespace Domain.IServices
 {
     public interface IRecipeService
-    {     
+    {
         public Task<RecipeDto> AddRecipe(RecipeDto recipe);
         public Task<RecipeDto> UpdateRecipe(RecipeDto recipe);
 

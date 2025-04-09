@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Domain.Enum.SharedEnums;
+using System.Text.Json.Serialization;
 
 namespace Presentation.Helpers
 {
@@ -6,10 +7,12 @@ namespace Presentation.Helpers
         {
             public bool Success { get; set; }
             public string? Message { get; set; }
-            public T Data { get; set; }
+        public T Data { get; set; }
+        public ErrorCode errorCode { get; set; }
 
 
-            public ResponseViewModel(bool success, string? message, T data)
+
+        public ResponseViewModel(bool success, string? message, T data)
             {
                 Success = success;
                 Message = message;

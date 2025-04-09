@@ -1,7 +1,7 @@
 ﻿using Application.IRepositories;
 using Application.Repositories;
 using Application.Service;
-using Domain.IRepositories;
+using Domain.IServices;
 using Hotel_Reservation_System.Error;
 using Hotel_Reservation_System.Middleware;
 using Infrastructure.Context;

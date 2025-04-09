@@ -1,6 +1,6 @@
 ﻿using Application.Dtos;
 using AutoMapper;
-using Domain.IRepositories;
+using Domain.IServices;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Helpers;

@@ -1,7 +1,7 @@
 ﻿using Application.Dtos;
 using Application.IRepositories;
 using AutoMapper;
-using Domain.IRepositories;
+using Domain.IServices;
 using Domain.Models;
 
 namespace Application.Service
