@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Domain.Models
 {
    public class Recipe : BaseEntity
-    {
+   {
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
@@ -17,7 +17,7 @@ namespace Domain.Models
         public string ImageUrl { get; set; } = string.Empty;
         public decimal Discount { get; set; } = 0.0m;
         public Category Category { get; set; } = new Category();
-    }
+   }
     
 
     

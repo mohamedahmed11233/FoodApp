@@ -12,11 +12,12 @@ namespace Domain.IServices
     {
         public Task<RecipeDto> AddRecipe(RecipeDto recipe);
         public Task<RecipeDto> UpdateRecipe(RecipeDto recipe);
-
+        public Task<RecipeDto> GetRecipeById(int RecipeId);
         public Task<bool> DeleteRecipe(string Name);
+        public  Task<bool> DeleteRecipeById(int Id);
         public Task<RecipeDto> GetRecipeByName(string Name);
         public Task<List<RecipeDto>> GetAllRecipes();
-        public Task<List<RecipeDto>> GetRecipesByCategory(Category category);
+        public Task<List<RecipeDto>> GetRecipesByCategory(int categoryId);
 
     }
 }

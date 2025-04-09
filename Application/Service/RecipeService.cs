@@ -49,12 +49,35 @@ namespace Application.Service
            return true;
         }
 
+        public async Task<bool> DeleteRecipeById(int Id)
+        {
+            if (Id ==0) return false;
+
+            var recipe = await _unitOfWork.Repository<Recipe>().GetBySpecAsync(X => X.Id == Id);
+
+            if (recipe is null) return false;
+            await _unitOfWork.Repository<Recipe>().DeleteAsync(recipe);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return true;
+        }
         public async Task<List<RecipeDto>> GetAllRecipes()
         {
             var recipes = await _unitOfWork.Repository<Recipe>().GetAllWithSpecAsync(X => X.Category != null && !string.IsNullOrEmpty(X.Category.Name));
             if (recipes is null) return null!;
             var recipeDto = _mapper.Map<List<RecipeDto>>(recipes);
             return recipeDto;
+        }
+
+        public async Task<RecipeDto> GetRecipeById(int RecipeId)
+        {
+            if (RecipeId == 0) return null;
+            var Recipe = await _unitOfWork.Repository<Recipe>().GetByIdAsync(RecipeId);
+            if (Recipe is null) return null;
+            var mappedRecipe = _mapper.Map<RecipeDto>(Recipe);
+            return mappedRecipe;
+                
         }
 
         public async Task<RecipeDto> GetRecipeByName(string Name)
@@ -66,10 +89,10 @@ namespace Application.Service
             return recipeDto;
         }
 
-        public async Task<List<RecipeDto>> GetRecipesByCategory(Category category)
+        public async Task<List<RecipeDto>> GetRecipesByCategory(int categoryId)
         {
-            if (string.IsNullOrEmpty(category.Name)) return null!;
-            var recipes = await _unitOfWork.Repository<Recipe>().GetBySpecAsync(x => x.Category.Name == category.Name);
+            if (categoryId ==0 ) return null!;
+            var recipes = await _unitOfWork.Repository<Recipe>().GetBySpecAsync(x => x.Category.Id == categoryId);
             if (recipes is null) return null!;
             var recipeDto = _mapper.Map<List<RecipeDto>>(recipes);
             return recipeDto;

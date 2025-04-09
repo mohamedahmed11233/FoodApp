@@ -26,6 +26,7 @@ namespace Presentation.MappingProfile
                 });
             CreateMap<AddRecipeViewModel, RecipeDto>();
             CreateMap<UpdateRecipeViewModel, RecipeDto>();
+            CreateMap<ResponseViewModel<RecipeDto>, Recipe>().ReverseMap();
         }
     }
 }
