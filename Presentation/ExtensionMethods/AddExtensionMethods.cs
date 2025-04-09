@@ -1,6 +1,5 @@
 ﻿using Application.IRepositories;
 using Application.Repositories;
-using Application.Service;
 using Domain.IServices;
 using Hotel_Reservation_System.Error;
 using Hotel_Reservation_System.Middleware;
@@ -25,7 +24,7 @@ namespace Presentation.ExtensionMethods
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             Services.AddScoped<IUnitOfWork, UnitOfWork>();
             Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            Services.AddScoped<IRecipeService, RecipeService>();
+            Services.AddMediatR(Conf=>Conf.RegisterServicesFromAssemblies(typeof(Program).Assembly));
             #region ApiValidationErrorr
             Services.Configure<ApiBehaviorOptions>(opthion =>
             {

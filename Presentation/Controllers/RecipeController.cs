@@ -1,107 +1,103 @@
-﻿using Application.Dtos;
+﻿using Application.CQRS.Recipe.Queries;
+using Application.CQRS.RecipeCQRS.Commands;
+using Application.CQRS.RecipeCQRS.Queries;
+using Application.Dtos;
 using AutoMapper;
-using Domain.IServices;
+using Hotel_Reservation_System.Error;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Helpers;
 using Presentation.ViewModel.Recipes;
+
 namespace Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class RecipeController : ControllerBase
     {
-        private readonly IRecipeService _recipeService;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public RecipeController(IRecipeService recipeService , IMapper mapper)
+        public RecipeController(IMediator mediator, IMapper mapper)
         {
-            _recipeService = recipeService;
+            _mediator = mediator;
             _mapper = mapper;
+        }
+        [HttpGet("{id}")]
+        public async Task<ResponseViewModel<RecipeViewModel>> GetRecipeById(int id)
+        {
+            var recipe = await _mediator.Send(new GetRecipeByIdQuery(id));
+
+            var mappedRecipe = _mapper.Map<RecipeViewModel>(recipe);
+            return new ResponseViewModel<RecipeViewModel>
+            (
+                success: true,
+                message: null,
+                data: mappedRecipe
+            );
         }
 
         [HttpGet("GetAllRecipes")]
-        public async Task<ResponseViewModel<List<RecipeViewModel>>> GetAllRecipes()
+        public async Task<ResponseViewModel<List<RecipeViewModel>>> GetAllRecipes(string Name)
         {
-            var recipes = await _recipeService.GetAllRecipes();
-            if (recipes is null)
-                return ResponseViewModel<List<RecipeViewModel>>.ErrorResult("No recipes found", null!);
-            var mappedRecipies = _mapper.Map<List<RecipeViewModel>>(recipes);
-            return ResponseViewModel<List<RecipeViewModel>>.SuccessResult(mappedRecipies);
+            var recipes = await _mediator.Send(new GetAllRecipiesQuery(Name));
+            var mappedRecipes = _mapper.Map<List<RecipeViewModel>>(recipes);
+            return new ResponseViewModel<List<RecipeViewModel>>
+            (
+                success: true,
+                message: null,
+                data: mappedRecipes
+            );
         }
-        [HttpGet("GetRecipeByName/{Name}")]
-        public async Task<ActionResult<ResponseViewModel<RecipeViewModel>>> GetRecipeByName(string Name)
-        {
-            var recipe = await _recipeService.GetRecipeByName(Name);
-            if (recipe is null)
-                return BadRequest(400);
-            var mappedRecipe = _mapper.Map<RecipeViewModel>(recipe);
-            return ResponseViewModel<RecipeViewModel>.SuccessResult(mappedRecipe);
-        }
-
-        [HttpGet("GetRecipeById/{RecipeId}")]
-        public async Task<ResponseViewModel<RecipeViewModel>> GetRecipeByName(int RecipeId)
-        {
-            var recipe = await _recipeService.GetRecipeById(RecipeId);
-            if (recipe is null)
-                return ResponseViewModel<RecipeViewModel>.ErrorResult("recipe is not found." , null);
-            var mappedRecipe = _mapper.Map<RecipeViewModel>(recipe);
-            return ResponseViewModel<RecipeViewModel>.SuccessResult(mappedRecipe);
-        }
-
-        [HttpPost("AddRecipe")]
-        public async Task<ResponseViewModel<RecipeViewModel>> AddRecipe( AddRecipeViewModel recipe)
-        {
-            if (recipe is null)
-                return ResponseViewModel<RecipeViewModel>.ErrorResult("Invalid recipe data", null);
-            var maapedRecipe = _mapper.Map<RecipeDto>(recipe);
-            var addedRecipe = await _recipeService.AddRecipe(maapedRecipe);
-            var RecipeData = _mapper.Map<RecipeViewModel>(addedRecipe);
-            if (addedRecipe is null)
-                return ResponseViewModel<RecipeViewModel>.ErrorResult("Failed to add recipe", null);
-            return ResponseViewModel<RecipeViewModel>.SuccessResult(RecipeData, "Recipe added successfully");
-        }
-        [HttpPut("UpdateRecipe")]
-        public async Task<ResponseViewModel<RecipeViewModel>> UpdateRecipe(UpdateRecipeViewModel recipe)
-        {
-            if (recipe is null)
-                return ResponseViewModel<RecipeViewModel>.ErrorResult("Invalid recipe data", null);
-            var maapedRecipe = _mapper.Map<RecipeDto>(recipe);
-            var updatedRecipe = await _recipeService.UpdateRecipe(maapedRecipe);
-            var RecipeData = _mapper.Map<RecipeViewModel>(updatedRecipe);
-            if (updatedRecipe is null)
-
-                return ResponseViewModel<RecipeViewModel>.ErrorResult("Failed to update recipe", null);
-            return ResponseViewModel<RecipeViewModel>.SuccessResult(RecipeData);
-        }
-        [HttpDelete("DeleteRecipe/{Name}")]
-        public async Task<ResponseViewModel<RecipeViewModel>> DeleteRecipe(string RecipeName)
-        {
-            if (RecipeName is null)
-                return ResponseViewModel<RecipeViewModel>.ErrorResult("Invalid recipe name" , null!);
-            var deleted = await _recipeService.DeleteRecipe(RecipeName);
-
-            if (!deleted)
-                return ResponseViewModel<RecipeViewModel>.ErrorResult(null , null );
-            return ResponseViewModel<RecipeViewModel>.SuccessResult(null, "Recipe deleted successfully");
-        }
-        [HttpDelete("DeleteRecipeById/{RecipeId}")]
-        public async Task<ResponseViewModel<RecipeViewModel>> DeleteRecipe(int RecipeId)
-        {
-            if (RecipeId ==0)
-                return ResponseViewModel<RecipeViewModel>.ErrorResult("Invalid recipe name" , null!);
-            var deleted = await _recipeService.DeleteRecipeById(RecipeId);
-            if (!deleted)
-                return ResponseViewModel<RecipeViewModel>.ErrorResult("Failed to delete recipe", null!);
-            return ResponseViewModel<RecipeViewModel>.SuccessResult( null! , "Recipe deleted successfully" );
-        }
-        [HttpGet("GetRecipeByCategory/{CategoryId}")]
+        [HttpGet("GetRecipeByCategoryId")]
         public async Task<ResponseViewModel<RecipeViewModel>> GetRecipeByCategoryId(int CategoryId)
         {
-            var Recipe = await _recipeService.GetRecipesByCategory(CategoryId);
-            var RecipeData = _mapper.Map<RecipeViewModel>(Recipe);
-            if (Recipe is null)
-                return ResponseViewModel<RecipeViewModel>.ErrorResult("No recipes found in this category", RecipeData);
-            return ResponseViewModel<RecipeViewModel>.SuccessResult(RecipeData);
-        } 
+            var recipe = await _mediator.Send(new GetRecipeByCategoryIdQuery(CategoryId));
+            var mappedRecipe = _mapper.Map<RecipeViewModel>(recipe);
+            return new ResponseViewModel<RecipeViewModel>
+            (
+                success: true,
+                message: null,
+                data: mappedRecipe
+            );
+        }
+        [HttpPost("AddRecipe")]
+        public async Task<ResponseViewModel<RecipeViewModel>> AddRecipe(RecipeViewModel recipeViewModel)
+        {
+            var recipe = _mapper.Map<AddRecipeViewModel>(recipeViewModel);
+            var createdRecipe = await _mediator.Send(new AddRecipeCommand(recipe));
+            var mappedCreatedRecipe = _mapper.Map<RecipeViewModel>(createdRecipe);
+            return new ResponseViewModel<RecipeViewModel>
+            (
+                success: true,
+                message: null,
+                data: mappedCreatedRecipe
+            );
+        }
+        [HttpPut("UpdateRecipe")]
+        public async Task<ResponseViewModel<RecipeViewModel>> UpdateRecipe( RecipeViewModel recipeViewModel)
+        {
+            var recipe = _mapper.Map<UpdateRecipeViewModel>(recipeViewModel);
+            var updatedRecipe = await _mediator.Send(new UpdateRecipeCommand(recipe));
+            var mappedUpdatedRecipe = _mapper.Map<RecipeViewModel>(updatedRecipe);
+            return new ResponseViewModel<RecipeViewModel>
+            (
+                success: true,
+                message: null,
+                data: mappedUpdatedRecipe
+            );
+        }
+        [HttpDelete("DeleteRecipe")]
+        public async Task<ResponseViewModel<bool>> DeleteRecipe(int id)
+        {
+            var deletedRecipe = await _mediator.Send(new DeleteRecipeCommand(id));
+            return new ResponseViewModel<bool>
+            (
+                success: true,
+                message: null,
+                data: deletedRecipe
+            );
+        }
     }
 }
