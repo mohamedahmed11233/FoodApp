@@ -16,6 +16,7 @@ namespace Infrastructure.Context
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+         
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -23,5 +24,6 @@ namespace Infrastructure.Context
         }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

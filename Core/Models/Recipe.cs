@@ -17,8 +17,9 @@ namespace Domain.Models
         public string ImageUrl { get; set; } = string.Empty;
         public decimal Discount { get; set; } = 0.0m;
         public Category Category { get; set; } = new Category();
-   }
-    
+        public User User { get; set; } = null!;
+    }
 
-    
+
+
 }

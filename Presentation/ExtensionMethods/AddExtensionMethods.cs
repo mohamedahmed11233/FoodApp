@@ -1,13 +1,21 @@
-﻿using Application.IRepositories;
+﻿using Application.CQRS.Auth.Commend.RegisterUser;
+using Application.Interfaces;
+using Application.IRepositories;
 using Application.Repositories;
+using Application.service;
+using Domain.Dtos.Auth;
 using Domain.IServices;
+using Domain.Models;
 using Hotel_Reservation_System.Error;
 using Hotel_Reservation_System.Middleware;
 using Infrastructure.Context;
 using Infrastructure.IRepositories;
 using Infrastructure.Repositories;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Presentation.ExtensionMethods
 {
@@ -24,7 +32,13 @@ namespace Presentation.ExtensionMethods
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             Services.AddScoped<IUnitOfWork, UnitOfWork>();
             Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            Services.AddMediatR(Conf=>Conf.RegisterServicesFromAssemblies(typeof(Program).Assembly));
+
+            Services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssemblies(
+                    typeof(Program).Assembly,  // إضافة معالجات المشروع الحالي
+                    Assembly.Load("Application")  // إضافة معالجات مشروع "Application"
+                )
+            );
             #region ApiValidationErrorr
             Services.Configure<ApiBehaviorOptions>(opthion =>
             {
@@ -43,6 +57,12 @@ namespace Presentation.ExtensionMethods
             });
             #endregion
             Services.AddAutoMapper(typeof(MappingProfile.Mapping));
+            Services.AddScoped<IRequestHandler<RegisterUserCommand, AuthDto>, RegisterUserCommandHandler>();
+            Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            Services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
+
+
+            Services.AddScoped<IJwtGenerator, JwtGenerator>();
             return Services;
         }
     }

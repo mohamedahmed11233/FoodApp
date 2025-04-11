@@ -9,6 +9,6 @@ namespace Domain.Enum.SharedEnums
     public enum Roles
     {
         Customer,
-        HotelStaff
+        Staff
     }
 }
