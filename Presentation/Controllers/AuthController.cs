@@ -29,7 +29,6 @@ namespace Presentation.Controllers
             var command = _mapper.Map<RegisterUserCommand>(model);
             var result = await _mediator.Send(command);
 
-            // Check if authentication was successful instead of looking for IsSuccess
             if (result.IsAuthenticated)
             {
                 return ResponseViewModel<AuthDto>.SuccessResult(result, result.Message);
@@ -43,11 +42,9 @@ namespace Presentation.Controllers
         [HttpPost("login")]
         public async Task<ResponseViewModel<AuthDto>> Login(LoginViewModel model)
         {
-            // Map view model to command using AutoMapper
             var command = _mapper.Map<LoginUserCommand>(model);
             var result = await _mediator.Send(command);
 
-            // Check if authentication was successful instead of looking for IsSuccess
             if (result.IsAuthenticated)
             {
                 return ResponseViewModel<AuthDto>.SuccessResult(result, result.Message);
