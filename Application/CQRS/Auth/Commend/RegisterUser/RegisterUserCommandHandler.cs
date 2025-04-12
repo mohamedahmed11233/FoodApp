@@ -30,20 +30,21 @@ namespace Application.CQRS.Auth.Commend.RegisterUser
 
         public async Task<AuthDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var existingUser = await _unitOfWork.Repository<User>().GetBySpecAsync(u => u.Email == request.Email);
+            var existingUser = await _unitOfWork.Repository<User>().GetBySpecAsync(u => u.Email == request.RegisterDto.Email);
             if (existingUser != null)
             {
-                return new AuthResponse(false, "User already exists with this email", null, null);
+                return AuthResponse.Failure("User already exists with this email");
             }
 
             var user = new User
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Username = request.Username,
-                Email = request.Email,
-                Password = _passwordHasher.HashPassword(null, request.Password),
-                IsDeleted = false,
+             
+                FirstName = request.RegisterDto.FirstName,
+                LastName = request.RegisterDto.LastName,       
+                Email = request.RegisterDto.Email,
+                Password = request.RegisterDto.Password,
+                Username = request.RegisterDto.Username,
+                Role= request.RegisterDto.Role,
             };
 
             await _unitOfWork.Repository<User>().AddAsync(user);
@@ -51,7 +52,7 @@ namespace Application.CQRS.Auth.Commend.RegisterUser
 
             var token = _jwtGenerator.GenerateToken(user);
 
-            return new AuthResponse(true, "User registered successfully", token, user.Username);
+            return AuthResponse.Success("Registration successful", token, user.Username);
         }
     }
 }

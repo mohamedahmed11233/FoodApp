@@ -1,25 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Dtos.Auth;
 
-namespace Domain.Dtos.Auth
+public class AuthResponse : AuthDto
 {
-    public class AuthResponse : AuthDto
-    {
-        public bool IsSuccess { get; set; }
-        public string Message { get; set; }
-        public string Token { get; set; }
-        public string Username { get; set; }
-        public AuthResponse() { }
+    public bool IsSuccess { get; set; }
 
-        public AuthResponse(bool isSuccess, string message, string token, string username)
-        {
-            IsSuccess = isSuccess;
-            Message = message;
-            Token = token;
-            Username = username;
-        }
+    public AuthResponse()
+    {
+    }
+
+    public AuthResponse(bool isSuccess, string message)
+    {
+        IsSuccess = isSuccess;
+        Message = message;
+        IsAuthenticated = isSuccess;
+    }
+
+    public AuthResponse(bool isSuccess, string message, string token, string username)
+    {
+        IsSuccess = isSuccess;
+        Message = message;
+        Token = token;
+        Username = username;
+        IsAuthenticated = isSuccess;
+    }
+
+    // Create success response
+    public static AuthResponse Success(string message, string token = "", string username = "")
+    {
+        return new AuthResponse(true, message, token, username);
+    }
+
+    // Create failure response
+    public static AuthResponse Failure(string message)
+    {
+        return new AuthResponse(false, message);
     }
 }

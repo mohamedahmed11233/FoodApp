@@ -30,26 +30,16 @@ namespace Application.CQRS.Auth.Queries.LoginUser
             var user = await _userRepository.GetBySpecAsync(u => u.Email == request.Email && !u.IsDeleted);
 
             if (user == null)
-                return new AuthResponse(false, "Invalid email or password", null, null);
+                return AuthResponse.Failure("Invalid email or password");
 
             var result = _passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
 
             if (result == PasswordVerificationResult.Failed)
-                return new AuthResponse(false, "Invalid email or password", null, null);
+                return AuthResponse.Failure("Invalid email or password");
 
             var token = _jwtGenerator.GenerateToken(user);
+            return AuthResponse.Success("Authentication successful", token, user.Username);
 
-            return new AuthResponse
-            {
-                IsSuccess = false,
-                Message = "Invalid email or password",
-                Token = null,
-                Username = null,
-                IsAuthenticated = false,
-                Email = "",
-                Roles = null,
-                ExpiresOn = DateTime.MinValue
-            };
         }
     }
 }
