@@ -45,7 +45,6 @@ namespace Presentation.MappingProfile
 
                 }));
 
-            // Map LoginViewModel to LoginUserCommand
             CreateMap<LoginViewModel, LoginUserCommand>();
         }
     }
