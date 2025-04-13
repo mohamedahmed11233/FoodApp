@@ -11,6 +11,6 @@ namespace Application.CQRS.Auth.Queries.LoginUser
     public record LoginUserCommand(
      string Email,
      string Password
-   ): IRequest<AuthResponse>;
+   ): IRequest<RegisterResponseDto>;
 
 }

@@ -1,4 +1,5 @@
-﻿using Application.CQRS.Auth.Commend.RegisterUser;
+﻿using Application.CQRS.Auth.Command.RegisterUser;
+using Application.CQRS.Auth.Commend.RegisterUser;
 using Application.Interfaces;
 using Application.IRepositories;
 using Application.Repositories;
@@ -57,7 +58,7 @@ namespace Presentation.ExtensionMethods
             });
             #endregion
             Services.AddAutoMapper(typeof(MappingProfile.Mapping));
-            Services.AddScoped<IRequestHandler<RegisterUserCommand, AuthDto>, RegisterUserCommandHandler>();
+            Services.AddScoped<IRequestHandler<RegisterUserCommand, RegisterResponseDto>, RegisterUserCommandHandler>();
             Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             Services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
 

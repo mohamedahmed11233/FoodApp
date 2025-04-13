@@ -8,6 +8,6 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Auth.Commend.RegisterUser
 {
-    public record RegisterUserCommand(RegisterDto RegisterDto) : IRequest<AuthDto>;
+    public record RegisterUserCommand(RegisterDto RegisterDto) : IRequest<RegisterResponseDto>;
 
 }

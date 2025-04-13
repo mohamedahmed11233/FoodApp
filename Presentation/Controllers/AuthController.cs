@@ -3,6 +3,7 @@ using Application.CQRS.Auth.Queries.LoginUser;
 using Application.ViewModel.Auth;
 using AutoMapper;
 using Domain.Dtos.Auth;
+using Domain.Enum.SharedEnums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Helpers;
@@ -22,37 +23,34 @@ namespace Presentation.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("register")]
-        public async Task<ResponseViewModel<AuthDto>> Register(RegisterViewModel model)
+        [HttpPost("Register")]
+
+        public async Task<ResponseViewModel<RegisterResponseDto>> Register(RegisterViewModel model)
         {
-            // Map view model to command using AutoMapper
             var command = _mapper.Map<RegisterUserCommand>(model);
             var result = await _mediator.Send(command);
 
-            if (result.IsAuthenticated)
+            if (result.IsSucess)
             {
-                return ResponseViewModel<AuthDto>.SuccessResult(result, result.Message);
+                return ResponseViewModel<RegisterResponseDto>.SuccessResult(result, "User registered successfully");
             }
-            else
-            {
-                return ResponseViewModel<AuthDto>.ErrorResult(result.Message, result);
-            }
+            return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, null, ErrorCode.FailedRegister);
         }
+
 
         [HttpPost("login")]
-        public async Task<ResponseViewModel<AuthDto>> Login(LoginViewModel model)
+        public async Task<ResponseViewModel<RegisterResponseDto>> Login(LoginViewModel model)
         {
             var command = _mapper.Map<LoginUserCommand>(model);
+            
             var result = await _mediator.Send(command);
 
-            if (result.IsAuthenticated)
+            if (result.IsSucess)
             {
-                return ResponseViewModel<AuthDto>.SuccessResult(result, result.Message);
+                return ResponseViewModel<RegisterResponseDto>.SuccessResult(result, "Login successful");
             }
-            else
-            {
-                return ResponseViewModel<AuthDto>.ErrorResult(result.Message, result);
-            }
+            return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, null, ErrorCode.FailedLogin);
         }
+
     }
 }

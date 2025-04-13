@@ -30,22 +30,25 @@ namespace Presentation.MappingProfile
                 });
             CreateMap<AddRecipeViewModel, RecipeDto>();
             CreateMap<UpdateRecipeViewModel, RecipeDto>();
+         
+            
             CreateMap<ResponseViewModel<RecipeDto>, Recipe>().ReverseMap();
 
 
+            CreateMap<RegisterViewModel, RegisterDto>();
+
             CreateMap<RegisterViewModel, RegisterUserCommand>()
-                .ForMember(dest => dest.RegisterDto, opt => opt.MapFrom(src => new RegisterDto
+                .ConstructUsing(src => new RegisterUserCommand(new RegisterDto
                 {
-                    Username = src.Username,
+                    Username = src.Username,    
                     Email = src.Email,
                     Password = src.Password,
-                    FirstName=src.FirstName,
-                    LastName=src.LastName,
-
-
+                    FirstName = src.FirstName,
+                    LastName = src.LastName
                 }));
+            CreateMap<LoginViewModel, LoginUserCommand>()
+            .ConstructUsing(src => new LoginUserCommand(src.Email, src.Password));  
 
-            CreateMap<LoginViewModel, LoginUserCommand>();
         }
     }
 }

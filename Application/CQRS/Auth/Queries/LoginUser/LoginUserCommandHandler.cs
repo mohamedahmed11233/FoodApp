@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Auth.Queries.LoginUser
 {
-    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthResponse>
+    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, RegisterResponseDto>
     {
         private readonly IGenericRepository<User> _userRepository;
         private readonly IJwtGenerator _jwtGenerator;
@@ -25,21 +25,37 @@ namespace Application.CQRS.Auth.Queries.LoginUser
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<AuthResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+        public async Task<RegisterResponseDto> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
+            // Fetch the user by email
             var user = await _userRepository.GetBySpecAsync(u => u.Email == request.Email && !u.IsDeleted);
 
             if (user == null)
-                return AuthResponse.Failure("Invalid email or password");
+                return new RegisterResponseDto
+                {
+                    IsSucess = false,
+                    Message = "Invalid email or password"
+                };
 
+            // Verify the password
             var result = _passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
 
             if (result == PasswordVerificationResult.Failed)
-                return AuthResponse.Failure("Invalid email or password");
+                return new RegisterResponseDto
+                {
+                    IsSucess = false,
+                    Message = "Invalid email or password"
+                };
 
             var token = _jwtGenerator.GenerateToken(user);
-            return AuthResponse.Success("Authentication successful", token, user.Username);
 
+            return new RegisterResponseDto
+            {
+                IsSucess = true,
+                Message = "Login successful",
+                Token = token,
+                Username = user.Username
+            };
         }
     }
 }

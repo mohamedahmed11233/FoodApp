@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace Domain.Dtos.Auth
 {
-    public class AuthDto
+    public class RegisterResponseDto
     {
         public bool IsSucess { get; set; }
-        public string Message { get; set; } = string.Empty;
+
         public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
         public IEnumerable<Roles> Roles { get; set; } = default!;
         public string Token { get; set; } = string.Empty;
-        public DateTime ExpiresOn { get; set; }
     }
 }
