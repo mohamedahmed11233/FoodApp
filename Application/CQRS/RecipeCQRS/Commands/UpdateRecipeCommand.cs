@@ -1,7 +1,7 @@
 ﻿using Application.Dtos;
+using Application.Dtos.Recipe;
 using Application.IRepositories;
 using MediatR;
-using Presentation.ViewModel.Recipes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.RecipeCQRS.Commands
 {
-    public sealed  record class UpdateRecipeCommand(UpdateRecipeViewModel Model) : IRequest<RecipeDto>;
+    public sealed  record class UpdateRecipeCommand(UpdateRecipeDto Model) : IRequest<RecipeDto>;
     public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, RecipeDto>
     {
         private readonly IUnitOfWork _unitOfWork;

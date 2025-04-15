@@ -1,8 +1,8 @@
 ﻿using Application.CQRS.Auth.Commend.RegisterUser;
 using Application.CQRS.Auth.Queries.LoginUser;
-using Application.ViewModel.Auth;
+using Presentation.ViewModel.Auth;
 using AutoMapper;
-using Domain.Dtos.Auth;
+using Application.Dtos.Auth;
 using Domain.Enum.SharedEnums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

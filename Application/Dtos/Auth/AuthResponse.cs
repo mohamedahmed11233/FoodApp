@@ -1,4 +1,4 @@
-﻿using Domain.Dtos.Auth;
+﻿using Application.Dtos.Auth;
 
 public class AuthResponse : AuthDto
 {

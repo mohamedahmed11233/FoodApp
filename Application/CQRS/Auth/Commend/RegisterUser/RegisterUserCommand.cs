@@ -1,4 +1,4 @@
-﻿using Domain.Dtos.Auth;
+﻿using Application.Dtos.Auth;
 using MediatR;
 using System;
 using System.Collections.Generic;

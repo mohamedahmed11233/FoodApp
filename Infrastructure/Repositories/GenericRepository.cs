@@ -18,7 +18,7 @@ namespace Infrastructure.Repositories
         private readonly DbSet<T> _dbSet;
         public GenericRepository(FoodAppDbContext dbContext)
         {
-          _dbContext = dbContext;
+            _dbContext = dbContext;
             _dbSet = dbContext.Set<T>();
         }
         public async Task AddAsync(T entity)
@@ -27,7 +27,7 @@ namespace Infrastructure.Repositories
 
         }
 
-     
+
         public async Task DeleteAsync(T item)
         {
 
@@ -85,6 +85,12 @@ namespace Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
 
 
+        }
+
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _dbContext.SaveChangesAsync();
         }
     }
 }

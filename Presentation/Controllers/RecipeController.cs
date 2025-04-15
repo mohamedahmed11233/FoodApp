@@ -2,6 +2,7 @@
 using Application.CQRS.RecipeCQRS.Commands;
 using Application.CQRS.RecipeCQRS.Queries;
 using Application.Dtos;
+using Application.Dtos.Recipe;
 using AutoMapper;
 using Hotel_Reservation_System.Error;
 using MediatR;
@@ -65,7 +66,7 @@ namespace Presentation.Controllers
         [HttpPost("AddRecipe")]
         public async Task<ResponseViewModel<RecipeViewModel>> AddRecipe(RecipeViewModel recipeViewModel)
         {
-            var recipe = _mapper.Map<AddRecipeViewModel>(recipeViewModel);
+            var recipe = _mapper.Map<AddRecipeDto>(recipeViewModel);
             var createdRecipe = await _mediator.Send(new AddRecipeCommand(recipe));
             var mappedCreatedRecipe = _mapper.Map<RecipeViewModel>(createdRecipe);
             return new ResponseViewModel<RecipeViewModel>
@@ -78,7 +79,7 @@ namespace Presentation.Controllers
         [HttpPut("UpdateRecipe")]
         public async Task<ResponseViewModel<RecipeViewModel>> UpdateRecipe( RecipeViewModel recipeViewModel)
         {
-            var recipe = _mapper.Map<UpdateRecipeViewModel>(recipeViewModel);
+            var recipe = _mapper.Map<UpdateRecipeDto>(recipeViewModel);
             var updatedRecipe = await _mediator.Send(new UpdateRecipeCommand(recipe));
             var mappedUpdatedRecipe = _mapper.Map<RecipeViewModel>(updatedRecipe);
             return new ResponseViewModel<RecipeViewModel>

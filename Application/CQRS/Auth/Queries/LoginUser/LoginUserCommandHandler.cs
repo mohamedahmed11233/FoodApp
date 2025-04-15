@@ -1,5 +1,5 @@
 ﻿using Application.Interfaces;
-using Domain.Dtos.Auth;
+using Application.Dtos.Auth;
 using Domain.Models;
 using Infrastructure.IRepositories;
 using MediatR;
@@ -37,7 +37,6 @@ namespace Application.CQRS.Auth.Queries.LoginUser
                     Message = "Invalid email or password"
                 };
 
-            // Verify the password
             var result = _passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
 
             if (result == PasswordVerificationResult.Failed)

@@ -1,12 +1,12 @@
 ﻿using Application.CQRS.Auth.Commend.RegisterUser;
 using Application.CQRS.Auth.Queries.LoginUser;
 using Application.Dtos;
-using Application.ViewModel.Auth;
+using Application.Dtos.Auth;
 using AutoMapper;
-using Domain.Dtos;
-using Domain.Dtos.Auth;
+
 using Domain.Models;
 using Presentation.Helpers;
+using Presentation.ViewModel.Auth;
 using Presentation.ViewModel.Recipes;
 
 namespace Presentation.MappingProfile

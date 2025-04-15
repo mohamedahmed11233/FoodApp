@@ -16,6 +16,8 @@ namespace Infrastructure.IRepositories
         public Task<IQueryable<T>> GetAllWithSpecAsync(Expression<Func<T, bool>> criteria);
         public Task<T> GetBySpecAsync(Expression<Func<T, bool>> criteria);
         public Task UpdateInclude(T entity, params string[] modifiedProperties);
+        public Task<int> SaveChangesAsync();
+
 
     }
 

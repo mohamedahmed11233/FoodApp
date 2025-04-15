@@ -1,8 +1,8 @@
 ﻿using Application.CQRS.Auth.Commend.RegisterUser;
 using Application.CQRS.Auth.Queries.LoginUser;
+using Application.Dtos.Auth;
 using Application.Interfaces;
 using Application.IRepositories;
-using Domain.Dtos.Auth;
 using Domain.Enum.SharedEnums;
 using Domain.Models;
 using Infrastructure.IRepositories;
@@ -18,20 +18,20 @@ namespace Application.CQRS.Auth.Command.RegisterUser
 {
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, RegisterResponseDto>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IGenericRepository<User> _userRepository;
         private readonly IJwtGenerator _jwtGenerator;
         private readonly IPasswordHasher<User> _passwordHasher;
 
-        public RegisterUserCommandHandler(IUnitOfWork unitOfWork, IJwtGenerator jwtGenerator, IPasswordHasher<User> passwordHasher)
+        public RegisterUserCommandHandler(IGenericRepository<User> UserRepo, IJwtGenerator jwtGenerator, IPasswordHasher<User> passwordHasher)
         {
-            _unitOfWork = unitOfWork;
+            _userRepository = UserRepo;
             _jwtGenerator = jwtGenerator;
             _passwordHasher = passwordHasher;
         }
 
         public async Task<RegisterResponseDto> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            var existingUser = await _unitOfWork.Repository<User>().GetBySpecAsync(u => u.Email == request.RegisterDto.Email);
+            var existingUser = await _userRepository.GetBySpecAsync(u => u.Email == request.RegisterDto.Email);
             if (existingUser != null)
             {
                 return new RegisterResponseDto
@@ -49,12 +49,22 @@ namespace Application.CQRS.Auth.Command.RegisterUser
                 Username = request.RegisterDto.Username,
                 Role = request.RegisterDto.Role
             };
+            var existingUserByUsername = await _userRepository.GetBySpecAsync(
+                u => u.Username.ToLower() == request.RegisterDto.Username.ToLower());
 
-            user.Password = _passwordHasher.HashPassword(user, request.RegisterDto.Password);
+            if (existingUserByUsername != null)
+            {
+                return new RegisterResponseDto
+                {
+                    IsSucess = false,
+                    Message = "Username is already taken"
+                };
+            }
+                user.Password = _passwordHasher.HashPassword(user, request.RegisterDto.Password);
 
 
-            await _unitOfWork.Repository<User>().AddAsync(user);
-            await _unitOfWork.SaveChangesAsync();
+            await _userRepository.AddAsync(user);
+            await _userRepository.SaveChangesAsync();
 
             var token = _jwtGenerator.GenerateToken(user);
 

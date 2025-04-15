@@ -1,4 +1,5 @@
 ﻿using Application.Dtos;
+using Application.Dtos.Recipe;
 using Application.IRepositories;
 using MediatR;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.RecipeCQRS.Queries
 {
-public sealed record GetRecipeByCategoryIdQuery(int CategoryId) :IRequest<RecipeDto>;
+    public sealed record GetRecipeByCategoryIdQuery(int CategoryId) :IRequest<RecipeDto>;
   public class GetRecipeByCategoryIdQueryHandler: IRequestHandler<GetRecipeByCategoryIdQuery, RecipeDto>
     {
         private readonly IUnitOfWork _unitOfWork;

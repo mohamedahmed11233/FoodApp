@@ -1,8 +1,8 @@
 ﻿using Application.Dtos;
+using Application.Dtos.Recipe;
 using Application.IRepositories;
 using Domain.Models;
 using MediatR;
-using Presentation.ViewModel.Recipes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

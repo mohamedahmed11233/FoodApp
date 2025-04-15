@@ -1,11 +1,10 @@
 ﻿using Application.CQRS.Auth.Command.RegisterUser;
 using Application.CQRS.Auth.Commend.RegisterUser;
+using Application.Dtos.Auth;
 using Application.Interfaces;
 using Application.IRepositories;
 using Application.Repositories;
 using Application.service;
-using Domain.Dtos.Auth;
-using Domain.IServices;
 using Domain.Models;
 using Hotel_Reservation_System.Error;
 using Hotel_Reservation_System.Middleware;

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Dtos.Auth
+namespace Application.Dtos.Auth
 {
     public class TokenRequestDto
     {
