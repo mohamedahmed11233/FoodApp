@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Helpers;
 using Application.CQRS.Auth.Commend.AssignRoleToUser;
+using Application.CQRS.Auth.Commend.AssignFeatures;
 
 namespace Presentation.Controllers
 {
@@ -32,9 +33,7 @@ namespace Presentation.Controllers
             var result = await _mediator.Send(command);
 
             if (result.IsSucess)
-            {
                 return ResponseViewModel<RegisterResponseDto>.SuccessResult(result, "User registered successfully");
-            }
             return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, null, ErrorCode.FailedRegister);
         }
 
@@ -47,20 +46,30 @@ namespace Presentation.Controllers
             var result = await _mediator.Send(command);
 
             if (result.IsSucess)
-            {
                 return ResponseViewModel<RegisterResponseDto>.SuccessResult(result, "Login successful");
-            }
             return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, null, ErrorCode.FailedLogin);
         }
-
         [HttpPost("AssignRole")]
-        public async Task<IActionResult> AssignRole([FromBody] AssignRoleToUserCommand command)
+        public async Task<ResponseViewModel<bool>> AssignRole([FromBody] AssignRoleToUserCommand command)
         {
             var result = await _mediator.Send(command);
-            if (result)
-                return Ok("Role assigned successfully");
 
-            return NotFound("User not found");
+            if (result)
+                return ResponseViewModel<bool>.SuccessResult(true, "Role assigned successfully");
+
+            return ResponseViewModel<bool>.ErrorResult("User not found", false, ErrorCode.UserNotFound);
+        }
+
+
+        [HttpPost("AssignRoleFeatures")]
+        public async Task<ResponseViewModel<bool>> AssignRoleFeatures(AssignRoleFeaturesCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (result)
+                return ResponseViewModel<bool>.SuccessResult(true, "Features assigned successfully");
+
+            return ResponseViewModel<bool>.ErrorResult("Failed to assign features", false, ErrorCode.internalServer);
         }
 
 

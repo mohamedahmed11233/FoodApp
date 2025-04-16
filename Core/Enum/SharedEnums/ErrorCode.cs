@@ -12,6 +12,7 @@ namespace Domain.Enum.SharedEnums
         None = 0,
         InvalidInput = 3,
         NotAuthorized = 4,
+        internalServer=5,
 
         // Recipe
         FailedAddRecipe = 100,

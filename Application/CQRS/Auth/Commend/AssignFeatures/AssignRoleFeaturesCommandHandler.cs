@@ -28,7 +28,7 @@ public class AssignRoleFeaturesCommandHandler : IRequestHandler<AssignRoleFeatur
             var oldFeatures = await _repository.GetAllWithSpecAsync(rf => rf.Role == request.Role);
 
             if (oldFeatures != null && oldFeatures.Any())
-                await _repository.DeleteRangeAsync(oldFeatures); // Bulk delete
+                await _repository.DeleteRangeAsync(oldFeatures); 
 
             if (request.Features != null && request.Features.Any())
             {
@@ -40,7 +40,7 @@ public class AssignRoleFeaturesCommandHandler : IRequestHandler<AssignRoleFeatur
                     Feature = feature
                 }).ToList();
 
-                await _repository.AddRangeAsync(newFeatures); // Bulk insert
+                await _repository.AddRangeAsync(newFeatures); 
             }
 
             await _repository.SaveChangesAsync();
