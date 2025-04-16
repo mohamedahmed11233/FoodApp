@@ -1,10 +1,12 @@
 ﻿using Application.CQRS.Auth.Command.RegisterUser;
 using Application.CQRS.Auth.Commend.RegisterUser;
 using Application.Dtos.Auth;
+using Application.Helper.Authorization;
 using Application.Interfaces;
 using Application.IRepositories;
 using Application.Repositories;
 using Application.service;
+using Domain.Enum.SharedEnums;
 using Domain.Models;
 using Hotel_Reservation_System.Error;
 using Hotel_Reservation_System.Middleware;
@@ -12,6 +14,7 @@ using Infrastructure.Context;
 using Infrastructure.IRepositories;
 using Infrastructure.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +63,21 @@ namespace Presentation.ExtensionMethods
             Services.AddScoped<IRequestHandler<RegisterUserCommand, RegisterResponseDto>, RegisterUserCommandHandler>();
             Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             Services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
+
+
+            Services.AddAuthorization(options =>
+            {
+                foreach (var feature in Enum.GetValues(typeof(FeatureEnum)))
+                {
+                    options.AddPolicy($"Feature:{feature}", policy =>
+                    {
+                        policy.Requirements.Add(new FeatureRequirement((FeatureEnum)feature));
+                    });
+                }
+            });
+
+            Services.AddSingleton<IAuthorizationHandler, FeatureAuthorizationHandler>();
+
 
 
             Services.AddScoped<IJwtGenerator, JwtGenerator>();

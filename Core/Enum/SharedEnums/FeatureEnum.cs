@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Enum.SharedEnums
 {
-    public enum Roles
+    public enum FeatureEnum
     {
-        Customer=0,
-        Staff=1
+        AddAddRecipe = 0,
+        ViewRecipe = 1,
+        UpdateRecipe = 2,
+        GetUser = 3,
     }
 }
