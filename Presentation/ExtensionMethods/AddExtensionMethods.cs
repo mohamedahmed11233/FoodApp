@@ -38,8 +38,8 @@ namespace Presentation.ExtensionMethods
 
             Services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssemblies(
-                    typeof(Program).Assembly,  // إضافة معالجات المشروع الحالي
-                    Assembly.Load("Application")  // إضافة معالجات مشروع "Application"
+                    typeof(Program).Assembly,  
+                    Assembly.Load("Application")  
                 )
             );
             #region ApiValidationErrorr
@@ -63,6 +63,12 @@ namespace Presentation.ExtensionMethods
             Services.AddScoped<IRequestHandler<RegisterUserCommand, RegisterResponseDto>, RegisterUserCommandHandler>();
             Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             Services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
+            
+            Services.AddHttpContextAccessor();
+
+            Services.AddTransient<FeatureAuthorizationHandler>();
+            Services.AddAuthorization();
+            Services.AddControllersWithViews();
 
 
             Services.AddAuthorization(options =>
