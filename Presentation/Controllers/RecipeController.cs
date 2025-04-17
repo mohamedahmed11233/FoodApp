@@ -4,6 +4,7 @@ using Application.CQRS.RecipeCQRS.Queries;
 using Application.Dtos;
 using Application.Dtos.Recipe;
 using AutoMapper;
+using Domain.Enum.SharedEnums;
 using Hotel_Reservation_System.Error;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -51,7 +52,9 @@ namespace Presentation.Controllers
                 data: mappedRecipes
             );
         }
+
         [HttpGet("GetRecipeByCategoryId")]
+        //[HasFeature(FeatureEnum.UpdateRecipe)]
         public async Task<ResponseViewModel<RecipeViewModel>> GetRecipeByCategoryId(int CategoryId)
         {
             var recipe = await _mediator.Send(new GetRecipeByCategoryIdQuery(CategoryId));

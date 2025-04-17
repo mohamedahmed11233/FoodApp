@@ -59,7 +59,8 @@ namespace Presentation.ExtensionMethods
                 };
             });
             #endregion
-            Services.AddAutoMapper(typeof(MappingProfile.Mapping));
+            Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             Services.AddScoped<IRequestHandler<RegisterUserCommand, RegisterResponseDto>, RegisterUserCommandHandler>();
             Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             Services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();

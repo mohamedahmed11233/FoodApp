@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Presentation.Helpers;
 using Application.CQRS.Auth.Commend.AssignRoleToUser;
 using Application.CQRS.Auth.Commend.AssignFeatures;
+using Presentation.ViewModel;
+using Application.CQRS.Auth.Queries.UserDataOperation;
+using Application.Dtos.User;
 
 namespace Presentation.Controllers
 {
@@ -36,7 +39,6 @@ namespace Presentation.Controllers
                 return ResponseViewModel<RegisterResponseDto>.SuccessResult(result, "User registered successfully");
             return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, null, ErrorCode.FailedRegister);
         }
-
 
         [HttpPost("login")]
         public async Task<ResponseViewModel<RegisterResponseDto>> Login(LoginViewModel model)
@@ -72,6 +74,21 @@ namespace Presentation.Controllers
             return ResponseViewModel<bool>.ErrorResult("Failed to assign features", false, ErrorCode.internalServer);
         }
 
+        [HttpGet("GetAllUsers")]
+        public async Task<ResponseViewModel<IEnumerable<UserViewModel>>> GetAllUser()
+        {
+            var user = await _mediator.Send( new GetAllUserQuery());
+            var result = _mapper.Map<IEnumerable<UserViewModel>>(user);
+            return ResponseViewModel<IEnumerable<UserViewModel>>.SuccessResult(result, "Users retrieved successfully");
+        }
+
+        [HttpGet("GetUser")]
+        public async Task<ResponseViewModel<UserViewModel>> GetUserByID(int Id)
+        {
+            var user = await _mediator.Send(new GetUserByIdQuery(Id));
+            var result = _mapper.Map<UserViewModel>(user);
+            return ResponseViewModel<UserViewModel>.SuccessResult(result, "Users retrieved successfully");
+        }
 
     }
 }
