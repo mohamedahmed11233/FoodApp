@@ -47,7 +47,7 @@ namespace Infrastructure.Repositories
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await Task.FromResult(_dbSet.FirstOrDefault(x => x.Id == id));
+            return await Task.FromResult(_dbSet.FirstOrDefault(x => x.Id == id)) ;
         }
 
         public async Task<T> GetBySpecAsync(Expression<Func<T, bool>> criteria)

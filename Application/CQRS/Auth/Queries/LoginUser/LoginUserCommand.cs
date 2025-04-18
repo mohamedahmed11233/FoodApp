@@ -8,6 +8,6 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Auth.Queries.LoginUser
 {
-    public record LoginUserCommand( string Email,string Password): IRequest<RegisterResponseDto>;
+    public sealed record LoginUserCommand( string Email,string Password): IRequest<RegisterResponseDto>;
 
 }

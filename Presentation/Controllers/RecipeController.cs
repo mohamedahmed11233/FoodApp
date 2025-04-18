@@ -1,10 +1,8 @@
-﻿using Application.CQRS.Recipe.Queries;
-using Application.CQRS.RecipeCQRS.Commands;
-using Application.CQRS.RecipeCQRS.Queries;
+﻿using Application.CQRS.Recipe.Commands;
+using Application.CQRS.Recipe.Queries;
 using Application.Dtos;
 using Application.Dtos.Recipe;
 using AutoMapper;
-using Domain.Enum.SharedEnums;
 using Hotel_Reservation_System.Error;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -21,86 +19,116 @@ namespace Presentation.Controllers
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public RecipeController(IMediator mediator, IMapper mapper)
+        public RecipeController(IMediator mediator , IMapper mapper )
         {
-            _mediator = mediator;
-            _mapper = mapper;
-        }
-        [HttpGet("{id}")]
-        public async Task<ResponseViewModel<RecipeViewModel>> GetRecipeById(int id)
-        {
-            var recipe = await _mediator.Send(new GetRecipeByIdQuery(id));
-
-            var mappedRecipe = _mapper.Map<RecipeViewModel>(recipe);
-            return new ResponseViewModel<RecipeViewModel>
-            (
-                success: true,
-                message: null,
-                data: mappedRecipe
-            );
-        }
-
-        [HttpGet("GetAllRecipes")]
-        public async Task<ResponseViewModel<List<RecipeViewModel>>> GetAllRecipes(string Name)
-        {
-            var recipes = await _mediator.Send(new GetAllRecipiesQuery(Name));
-            var mappedRecipes = _mapper.Map<List<RecipeViewModel>>(recipes);
-            return new ResponseViewModel<List<RecipeViewModel>>
-            (
-                success: true,
-                message: null,
-                data: mappedRecipes
-            );
-        }
-
-        [HttpGet("GetRecipeByCategoryId")]
-        //[HasFeature(FeatureEnum.UpdateRecipe)]
-        public async Task<ResponseViewModel<RecipeViewModel>> GetRecipeByCategoryId(int CategoryId)
-        {
-            var recipe = await _mediator.Send(new GetRecipeByCategoryIdQuery(CategoryId));
-            var mappedRecipe = _mapper.Map<RecipeViewModel>(recipe);
-            return new ResponseViewModel<RecipeViewModel>
-            (
-                success: true,
-                message: null,
-                data: mappedRecipe
-            );
+            this._mediator = mediator;
+            this._mapper = mapper;
         }
         [HttpPost("AddRecipe")]
-        public async Task<ResponseViewModel<RecipeViewModel>> AddRecipe(RecipeViewModel recipeViewModel)
+        public async Task<ResponseViewModel<AddRecipeViewModel>> AddRecipe(AddRecipeViewModel model)
         {
-            var recipe = _mapper.Map<AddRecipeDto>(recipeViewModel);
-            var createdRecipe = await _mediator.Send(new AddRecipeCommand(recipe));
-            var mappedCreatedRecipe = _mapper.Map<RecipeViewModel>(createdRecipe);
+            var recipeDto = _mapper.Map<AddRecipeDto>(model);
+
+            var result = await _mediator.Send(new AddRecipeCommand(recipeDto));
+            if (result is null)
+            {
+                return new ResponseViewModel<AddRecipeViewModel>(
+                    success: false,
+                    message: "Failed to add recipe",
+                    data: null,
+                    errorCode: Domain.Enum.SharedEnums.ErrorCode.InvalidRecipeData // Adjust this if a specific error code is required
+                );
+            }
+
+            var recipeViewModel = _mapper.Map<AddRecipeViewModel>(result);
+            return new ResponseViewModel<AddRecipeViewModel>(
+                success: true,
+                message: "Recipe added successfully",
+                data: recipeViewModel
+            );
+
+        }
+        [HttpGet("GetAllRecipes")]
+        public async Task<ResponseViewModel<IEnumerable<RecipeViewModel>>> GetAllRecipes(string? recipeName)
+        {
+            var recipes = await _mediator.Send(new GetAllRecipesQuery(recipeName));
+            if (recipes is null)
+            {
+                return new ResponseViewModel<IEnumerable<RecipeViewModel>>
+                (
+                    success: false,
+                    data: null,
+                    errorCode: Domain.Enum.SharedEnums.ErrorCode.RecipeNotFound
+                );
+            }
+
+            var recipeViewModels = _mapper.Map<IEnumerable<RecipeViewModel>>(recipes);
+            return new ResponseViewModel<IEnumerable<RecipeViewModel>>(
+                success: true,
+                data: recipeViewModels
+            );
+        }
+
+        [HttpGet("GetRecipeById")]
+        public async Task<ResponseViewModel<RecipeViewModel>> GetRecipeById(int Id)
+        {
+            var recipe =await _mediator.Send(new GetRecipeByIdQuery(Id));
+            if (recipe is null)
+            {
+                return new ResponseViewModel<RecipeViewModel>
+                (
+                    success: false,
+                    data: null,
+                    errorCode: Domain.Enum.SharedEnums.ErrorCode.RecipeNotFound
+                );
+            }
+            var recipeViewModel = _mapper.Map<RecipeViewModel>(recipe);
             return new ResponseViewModel<RecipeViewModel>
             (
                 success: true,
-                message: null,
-                data: mappedCreatedRecipe
+                data: recipeViewModel
             );
         }
-        [HttpPut("UpdateRecipe")]
-        public async Task<ResponseViewModel<RecipeViewModel>> UpdateRecipe( RecipeViewModel recipeViewModel)
-        {
-            var recipe = _mapper.Map<UpdateRecipeDto>(recipeViewModel);
-            var updatedRecipe = await _mediator.Send(new UpdateRecipeCommand(recipe));
-            var mappedUpdatedRecipe = _mapper.Map<RecipeViewModel>(updatedRecipe);
-            return new ResponseViewModel<RecipeViewModel>
-            (
-                success: true,
-                message: null,
-                data: mappedUpdatedRecipe
-            );
-        }
+
         [HttpDelete("DeleteRecipe")]
-        public async Task<ResponseViewModel<bool>> DeleteRecipe(int id)
+        public async Task<ResponseViewModel<bool>> DeleteRecipeById(int Id)
         {
-            var deletedRecipe = await _mediator.Send(new DeleteRecipeCommand(id));
+            var recipe = await _mediator.Send(new DeleteRecipeByIdCommand(Id));
+            if (!recipe)
+            {
+                return new ResponseViewModel<bool>
+                (
+                    success: false,
+                    data: recipe,
+                    errorCode: Domain.Enum.SharedEnums.ErrorCode.FailedDeleteRecipe
+                );
+            }
+            var recipeViewModel = _mapper.Map<RecipeViewModel>(recipe);
             return new ResponseViewModel<bool>
             (
                 success: true,
-                message: null,
-                data: deletedRecipe
+                data: recipe
+            );
+        }
+        [HttpPut("UpdateRecipeById/{model.Id}")]
+        public async Task<ResponseViewModel<UpdateRecipeViewModel>> UpdateRecipeById(UpdateRecipeViewModel model)
+        {
+            var recipeDto = _mapper.Map<UpdateRecipeViewModel, UpdateRecipeDto>(model);
+            var recipe = await _mediator.Send(new UpdateRecipeCommand(recipeDto));
+            if (recipe is null)
+            {
+                return new ResponseViewModel<UpdateRecipeViewModel>
+                (
+                    success: false,
+                    data: null,
+                    errorCode: Domain.Enum.SharedEnums.ErrorCode.FailedUpdateRecipe
+                );
+            }
+            var recipeViewModel = _mapper.Map<UpdateRecipeViewModel>(recipe);
+            return new ResponseViewModel<UpdateRecipeViewModel>
+            (
+                success: true,
+                data: recipeViewModel
             );
         }
     }

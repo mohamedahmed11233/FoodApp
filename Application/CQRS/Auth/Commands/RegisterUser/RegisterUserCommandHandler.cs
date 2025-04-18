@@ -2,17 +2,11 @@
 using Application.CQRS.Auth.Queries.LoginUser;
 using Application.Dtos.Auth;
 using Application.Interfaces;
-using Application.IRepositories;
-using Domain.Enum.SharedEnums;
 using Domain.Models;
 using Infrastructure.IRepositories;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Application.CQRS.Auth.Command.RegisterUser
 {
@@ -46,7 +40,7 @@ namespace Application.CQRS.Auth.Command.RegisterUser
                 FirstName = request.RegisterDto.FirstName,
                 LastName = request.RegisterDto.LastName,
                 Email = request.RegisterDto.Email,
-                Username = request.RegisterDto.Username,
+                Username = request.RegisterDto.Email.Split('@')[0],
                 Role = request.RegisterDto.Role
             };
             var existingUserByUsername = await _userRepository.GetBySpecAsync(

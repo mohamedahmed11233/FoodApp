@@ -3,29 +3,21 @@ using System.Text.Json.Serialization;
 
 namespace Presentation.Helpers
 {
-    public class ResponseViewModel<T>
+    public class ResponseViewModel<T>(bool success, ErrorCode errorCode = ErrorCode.None, string? message = default, T? data = default)
     {
-        public bool Success { get; set; }
-        public string? Message { get; set; }
-        public T? Data { get; set; }
-        public ErrorCode ErrorCode { get; set; }
+        public bool Success { get; set; } = success;
+        public string? Message { get; set; } = message;
+        public T? Data { get; set; } = data;
+        public ErrorCode ErrorCode { get; set; } = errorCode;
 
-        public ResponseViewModel(bool success, string? message, T? data, ErrorCode errorCode = ErrorCode.None)
+        public static ResponseViewModel<T> SuccessResult(T data, string? message = "")
         {
-            Success = success;
-            Message = message;
-            Data = data;
-            ErrorCode = errorCode;
+            return new ResponseViewModel<T>(true, ErrorCode.None, message, data); // No error code for success
         }
 
-        public static ResponseViewModel<T> SuccessResult(T data, string message = "")
+        public static ResponseViewModel<T> ErrorResult(string? message, T? data = default, ErrorCode errorCode = ErrorCode.None)
         {
-            return new ResponseViewModel<T>(true, message, data, ErrorCode.None); // No error code for success
-        }
-
-        public static ResponseViewModel<T> ErrorResult(string message, T? data = default, ErrorCode errorCode = ErrorCode.None)
-        {
-            return new ResponseViewModel<T>(false, message, data, errorCode); // Set the error code as needed
+            return new ResponseViewModel<T>(false, errorCode, message, data); // Set the error code as needed
         }
     }
 }
