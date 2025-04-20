@@ -12,7 +12,6 @@ namespace Domain.Enum.SharedEnums
         None = 0,
         InvalidInput = 3,
         NotAuthorized = 4,
-        internalServer=5,
 
         // Recipe
         FailedAddRecipe = 100,
@@ -39,7 +38,8 @@ namespace Domain.Enum.SharedEnums
         PaymentFailure = 1000,
 
         // External Services
-        ExternalServiceUnavailable = 2000
+        ExternalServiceUnavailable = 2000,
+        InvalidCategoryData = 2001
     }
 
 }

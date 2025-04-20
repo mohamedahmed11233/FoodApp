@@ -2,6 +2,7 @@
 using Application.CQRS.Auth.Queries.LoginUser;
 using Application.Dtos;
 using Application.Dtos.Auth;
+using Application.Dtos.Category;
 using Application.Dtos.Recipe;
 using Application.Dtos.User;
 using AutoMapper;
@@ -10,6 +11,7 @@ using Domain.Models;
 using Presentation.Helpers;
 using Presentation.ViewModel;
 using Presentation.ViewModel.Auth;
+using Presentation.ViewModel.Category;
 using Presentation.ViewModel.Recipes;
 
 namespace Presentation.MappingProfile
@@ -18,28 +20,22 @@ namespace Presentation.MappingProfile
     {
         public Mapping()
         {
-            #region 1st Attempt
-            //    CreateMap<Recipe, RecipeDto>()
-            //        .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom<PictureUrlResolver>())
-            //        .ForMember(opt => opt.Category, opt => opt.MapFrom(S => S.Category.Name));
-            //    CreateMap<Category, CategoryDto>().ReverseMap();
-            //    CreateMap<AddRecipeViewModel, RecipeDto>();
-            //    CreateMap<RecipeViewModel, AddRecipeDto>().ReverseMap();
-            //    CreateMap<AddRecipeDto, Recipe>().ForPath(R=>R.Category.Name , options=>options.MapFrom(Dest=>Dest.Category.ToString()));
-            //    CreateMap<Recipe, AddRecipeDto>();
-            //    CreateMap<Recipe, RecipeViewModel>();
-            //    CreateMap<AddRecipeDto, RecipeViewModel>().ReverseMap();
-            //    CreateMap<UpdateRecipeViewModel, RecipeDto>();
-            //    CreateMap<RecipeDto, RecipeViewModel>().ReverseMap();
-            //    CreateMap<Category, CategoryDto>().ReverseMap();
-            //    CreateMap<ResponseViewModel<RecipeDto>, Recipe>().ReverseMap(); 
-            #endregion
+ 
             CreateMap<AddRecipeViewModel, AddRecipeDto>().ReverseMap();
             CreateMap<Recipe, AddRecipeDto>().ReverseMap();
             CreateMap<Recipe, RecipeDto>().ReverseMap();
             CreateMap<RecipeDto, RecipeViewModel>();
             CreateMap<Recipe, UpdateRecipeDto>();
             CreateMap<UpdateRecipeViewModel, UpdateRecipeDto>();
+            CreateMap<UpdateCategoryDto, Category>().ReverseMap();
+            CreateMap<AddCategoryDto, Category>().ReverseMap();
+            CreateMap<AddCategoryViewModel, AddCategoryDto>().ReverseMap();
+            CreateMap<AddCategoryViewModel,AddCategoryDto>().ReverseMap();
+            CreateMap<AddCategoryDto, CategoryViewModel>().ReverseMap();
+            CreateMap<UpdateCategoryViewModel, UpdateCategoryDto>();
+            CreateMap<UpdateCategoryDto, CategoryViewModel>();
+            CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<CategoryDto, CategoryViewModel>().ReverseMap();
             #region Aurh
             CreateMap<RegisterViewModel, RegisterDto>();
 

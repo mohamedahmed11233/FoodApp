@@ -9,6 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Repositories
 {
@@ -37,12 +38,12 @@ namespace Infrastructure.Repositories
 
         public Task<IEnumerable<T>> GetAllAsync()
         {
-            return Task.FromResult(_dbSet.AsNoTracking().AsEnumerable());
+            return Task.FromResult(_dbSet.AsNoTracking().AsEnumerable().Where(X=>X.IsDeleted is false));
         }
 
-        public async Task<IQueryable<T>> GetAllWithSpecAsync(Expression<Func<T, bool>> criteria)
+        public async Task<IQueryable<T>> GetAllWithSpecAsync(Expression<Func<T, bool>> criteria )
         {
-            return await Task.FromResult(_dbSet.AsNoTracking().Where(criteria).AsQueryable());
+            return await Task.FromResult (_dbSet.AsNoTracking().Where(criteria));
         }
 
         public async Task<T> GetByIdAsync(int id)
@@ -99,8 +100,28 @@ namespace Infrastructure.Repositories
 
         public async Task DeleteRangeAsync(IEnumerable<T> entities)
         {
-              _dbContext.RemoveRange(entities);
+            _dbContext.RemoveRange(entities);
+            await Task.CompletedTask;
         }
 
+        public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>> filter = null!, params Expression<Func<T, object>>[] includeProperties)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (includeProperties != null && includeProperties.Any())
+            {
+                foreach (var includeProperty in includeProperties)
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+
+            return await query.ToListAsync();
+        }
     }
 }

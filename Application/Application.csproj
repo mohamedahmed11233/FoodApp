@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Core\Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CQRS\Category\Commands\" />
-  </ItemGroup>
-
 </Project>

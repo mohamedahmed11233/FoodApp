@@ -16,7 +16,6 @@ namespace Domain.Models
         public int Quantity { get; set; }
         public string ImageUrl { get; set; } 
         public decimal Discount { get; set; } 
-        public Category Category { get; set; } 
     
     }
 

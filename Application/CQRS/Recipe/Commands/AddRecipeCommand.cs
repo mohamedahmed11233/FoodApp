@@ -33,12 +33,7 @@ namespace Application.CQRS.Recipe.Commands
                 Price = request.Model.Price,
                 ImageUrl = request.Model.ImageUrl,
                 Discount = request.Model.Discount,
-                Category = new Domain.Models.Category
-                {
-                    Name = request.Model.Category,
-                    Description = request.Model.Description,
-
-                },
+               
                 Quantity = 1
             };
            await _unitOfWork.Repository<Domain.Models.Recipe>().AddAsync(recipe);
