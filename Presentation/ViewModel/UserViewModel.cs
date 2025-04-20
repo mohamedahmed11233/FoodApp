@@ -1,14 +1,19 @@
 ﻿using Domain.Enum.SharedEnums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.ViewModel
 {
     public class UserViewModel
     {
+        [Required]
         public int Id { get; set; }
-        public string FirstName { get; set; } = string.Empty;
-        public string LastName { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; } 
+        public string Username { get; set; }
+        [Required]
+        public string Email { get; set; } 
         public Roles Role { get; set; }
 
     }

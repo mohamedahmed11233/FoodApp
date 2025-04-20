@@ -7,7 +7,7 @@ namespace Presentation.ViewModel.Category
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public ICollection<RecipeViewModel> Recipes { get; set; } = new HashSet<RecipeViewModel>();
+        public int RecipeId { get; set; } 
 
     }
 }

@@ -50,11 +50,10 @@ namespace Presentation.Controllers
 
         }
 
-        [HasFeature(FeatureEnum.UpdateRecipe)]
         [HttpGet("GetAllRecipes")]
-        public async Task<ResponseViewModel<IEnumerable<RecipeViewModel>>> GetAllRecipes(string? recipeName)
+        public async Task<ResponseViewModel<IEnumerable<RecipeViewModel>>> GetAllRecipes()
         {
-            var recipes = await _mediator.Send(new GetAllRecipesQuery(recipeName));
+            var recipes = await _mediator.Send(new GetAllRecipesQuery());
             if (recipes is null)
             {
                 return new ResponseViewModel<IEnumerable<RecipeViewModel>>

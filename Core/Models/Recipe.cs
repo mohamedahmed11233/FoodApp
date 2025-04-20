@@ -15,8 +15,11 @@ namespace Domain.Models
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public string ImageUrl { get; set; } 
-        public decimal Discount { get; set; } 
-    
+        public decimal Discount { get; set; }
+        public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; } = new Category();
+
     }
 
 

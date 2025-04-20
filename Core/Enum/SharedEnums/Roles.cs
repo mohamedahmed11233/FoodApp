@@ -8,7 +8,8 @@ namespace Domain.Enum.SharedEnums
 {
     public enum Roles
     {
-        Customer=0,
-        Staff=1
+        User=0,
+        Staff=1,
+        Admin = 2,
     }
 }

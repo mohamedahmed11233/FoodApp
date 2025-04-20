@@ -37,7 +37,6 @@ namespace Presentation.Controllers
                     errorCode: Domain.Enum.SharedEnums.ErrorCode.InvalidCategoryData
                 );
             }
-            // Fix: Convert IList<CategoryViewModel> to List<CategoryViewModel>
             var categoryViewModel = _mapper.Map<IList<CategoryDto>, List<CategoryViewModel>>(result);
             return new ResponseViewModel<List<CategoryViewModel>>
             (

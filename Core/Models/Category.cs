@@ -12,5 +12,5 @@ namespace Domain.Models
         public int RecipeId { get; set; }
 
     }
-    
+
 }

@@ -16,7 +16,7 @@ namespace Domain.Models
         public string Password { get; set; } 
 
         public ICollection<Recipe>? Recipes { get; set; } = new HashSet<Recipe>();
-        public Roles Role { get; set; } = Roles.Customer;
+        public Roles Role { get; set; } = Roles.User;
     }
 
 }

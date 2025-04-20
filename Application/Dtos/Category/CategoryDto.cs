@@ -11,6 +11,6 @@ namespace Application.Dtos.Category
         public int Id { get; set; }
         public string Name { get; set; } 
         public string Description { get; set; }
-        public ICollection<RecipeDto> Recipes { get; set; } = new HashSet<RecipeDto>();
+        public int RecipeId { get; set; } 
    }
 }

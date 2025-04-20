@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Recipe.Queries
 {
-    public sealed record GetAllRecipesQuery(string ?Name) :IRequest<IEnumerable<RecipeDto>>;
+    public sealed record GetAllRecipesQuery() :IRequest<IEnumerable<RecipeDto>>;
     public class GetAllRecipesQueryHandler :IRequestHandler<GetAllRecipesQuery , IEnumerable<RecipeDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -25,10 +25,8 @@ namespace Application.CQRS.Recipe.Queries
         public async Task<IEnumerable<RecipeDto>> Handle(GetAllRecipesQuery request, CancellationToken cancellationToken)
         {
             var recipes = await _unitOfWork.Repository<Domain.Models.Recipe>().GetAllAsync();
-            if (request.Name != null)
-            {
-              await _unitOfWork.Repository<Domain.Models.Recipe>().GetAllWithSpecAsync(x => x.Name == request.Name);
-            }
+         
+            await _unitOfWork.Repository<Domain.Models.Recipe>().GetAllAsync();
             
             var recipeDtos  = _mapper.Map<IEnumerable<RecipeDto>>(recipes);
             return recipeDtos;

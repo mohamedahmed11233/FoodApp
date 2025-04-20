@@ -14,6 +14,6 @@ namespace Application.Dtos
         public decimal Price { get; set; }
         public string ImageUrl { get; set; } 
         public decimal Discount { get; set; }
-        public string Category { get; set; } 
+        public int CategoryId { get; set; } 
     }
 }
