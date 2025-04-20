@@ -83,9 +83,7 @@ namespace Presentation.ExtensionMethods
                 }
             });
 
-            Services.AddSingleton<IAuthorizationHandler, FeatureAuthorizationHandler>();
-
-
+            Services.AddScoped<IAuthorizationHandler, FeatureAuthorizationHandler>();
 
             Services.AddScoped<IJwtGenerator, JwtGenerator>();
             return Services;
