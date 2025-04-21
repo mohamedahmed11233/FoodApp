@@ -1,4 +1,5 @@
-﻿using Application.Dtos.User;
+﻿using Application.Dtos.Favorite;
+using Application.Dtos.User;
 using AutoMapper;
 using Domain.Models;
 using System;
@@ -14,6 +15,7 @@ namespace Application.Helper.MappingProfileDto
         public MappingProfile() 
         {
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<Favorite, FavoriteDto>().ReverseMap();
         }
     }
 }

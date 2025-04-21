@@ -26,5 +26,6 @@ namespace Infrastructure.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<RoleFeature> RoleFeatures { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
     }
 }

@@ -123,5 +123,10 @@ namespace Infrastructure.Repositories
 
             return await query.ToListAsync();
         }
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AnyAsync(predicate);
+        }
+
     }
 }

@@ -23,8 +23,7 @@ namespace Infrastructure.IRepositories
         Task DeleteRangeAsync(IEnumerable<T> entities);
 
         Task AddRangeAsync(IEnumerable<T> entities);
-
-
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
     }
 
 }
