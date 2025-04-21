@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Presentation.Helpers;
 using Presentation.ViewModel;
 using Application.CQRS.Auth.Queries.UserDataOperation;
+using Application.CQRS.Auth.Queries.OTP;
 
 namespace Presentation.Controllers
 {
@@ -48,7 +49,21 @@ namespace Presentation.Controllers
                 return ResponseViewModel<RegisterResponseDto>.SuccessResult(result);
             return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, null, ErrorCode.FailedLogin);
         }
-       
+
+        [HttpGet("generate-otp-secret")]
+        public async Task<ResponseViewModel<GenerateSecretKeyDTO>> GenerateOtpSecretAsync(int userId)
+        {
+            var secretKeyDto = await _mediator.Send(new GenerateSecretKeyQuery(userId));
+            if (secretKeyDto == null)
+                return ResponseViewModel<GenerateSecretKeyDTO>.ErrorResult("Failed to generate OTP secret key.",null,ErrorCode.NotFound);
+            return ResponseViewModel<GenerateSecretKeyDTO>.SuccessResult(secretKeyDto);
+        }
+
+
+
+
+
+
         [HttpGet("GetAllUsers")]
         public async Task<ResponseViewModel<IEnumerable<UserViewModel>>> GetAllUser()
         {
