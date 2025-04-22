@@ -10,6 +10,8 @@ using Presentation.Helpers;
 using Presentation.ViewModel;
 using Application.CQRS.Auth.Queries.UserDataOperation;
 using Application.CQRS.Auth.Queries.OTP;
+using Application.CQRS.Auth.Commands.OTP;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Presentation.Controllers
 {
@@ -35,7 +37,7 @@ namespace Presentation.Controllers
 
             if (result.IsSucess)
                 return ResponseViewModel<RegisterResponseDto>.SuccessResult(result);
-            return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, null!);
+            return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message);
         }
 
         [HttpPost("Login")]
@@ -47,7 +49,7 @@ namespace Presentation.Controllers
 
             if (result.IsSucess)
                 return ResponseViewModel<RegisterResponseDto>.SuccessResult(result);
-            return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, null, ErrorCode.FailedLogin);
+            return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message,  ErrorCode.FailedLogin);
         }
 
         [HttpGet("generate-otp-secret")]
@@ -55,13 +57,22 @@ namespace Presentation.Controllers
         {
             var secretKeyDto = await _mediator.Send(new GenerateSecretKeyQuery(userId));
             if (secretKeyDto == null)
-                return ResponseViewModel<GenerateSecretKeyDTO>.ErrorResult("Failed to generate OTP secret key.",null,ErrorCode.NotFound);
+                return ResponseViewModel<GenerateSecretKeyDTO>.ErrorResult("Failed to generate OTP secret key.",ErrorCode.NotFound);
             return ResponseViewModel<GenerateSecretKeyDTO>.SuccessResult(secretKeyDto);
         }
 
+        [HttpPost("VerifyOtp")]
+        public async Task<ResponseViewModel<bool>> VerifyOtpSecretAsync(VerifyOtpRequestViewModel requestViewModel)
+        {
+            var command =  _mapper.Map<VerifyOtpCodeCommand>(requestViewModel);
+            var isVerified = await _mediator.Send(command);
+            if (!isVerified)
+                return ResponseViewModel<bool>.ErrorResult("Invalid OTP code.", ErrorCode.InvalidCredentials);
 
+            return ResponseViewModel<bool>.SuccessResult(true);
+        }
 
-
+            
 
 
         [HttpGet("GetAllUsers")]

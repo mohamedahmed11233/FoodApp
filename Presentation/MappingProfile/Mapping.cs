@@ -1,4 +1,5 @@
-﻿using Application.CQRS.Auth.Commend.RegisterUser;
+﻿using Application.CQRS.Auth.Commands.OTP;
+using Application.CQRS.Auth.Commend.RegisterUser;
 using Application.CQRS.Auth.Queries.LoginUser;
 using Application.Dtos;
 using Application.Dtos.Auth;
@@ -20,7 +21,7 @@ namespace Presentation.MappingProfile
     {
         public Mapping()
         {
- 
+
             CreateMap<AddRecipeViewModel, AddRecipeDto>().ReverseMap();
             CreateMap<Recipe, AddRecipeDto>().ReverseMap();
             CreateMap<Recipe, RecipeDto>().ReverseMap();
@@ -30,7 +31,7 @@ namespace Presentation.MappingProfile
             CreateMap<UpdateCategoryDto, Category>().ReverseMap();
             CreateMap<AddCategoryDto, Category>().ReverseMap();
             CreateMap<AddCategoryViewModel, AddCategoryDto>().ReverseMap();
-            CreateMap<AddCategoryViewModel,AddCategoryDto>().ReverseMap();
+            CreateMap<AddCategoryViewModel, AddCategoryDto>().ReverseMap();
             CreateMap<AddCategoryDto, CategoryViewModel>().ReverseMap();
             CreateMap<UpdateCategoryViewModel, UpdateCategoryDto>();
             CreateMap<UpdateCategoryDto, CategoryViewModel>();
@@ -51,11 +52,21 @@ namespace Presentation.MappingProfile
             CreateMap<LoginViewModel, LoginUserCommand>()
             .ConstructUsing(src => new LoginUserCommand(src.Email, src.Password));
 
+            CreateMap<VerifyOtpRequestViewModel, VerifyOtpRequestDto>();
+            CreateMap<VerifyOtpRequestViewModel, VerifyOtpCodeCommand>()
+                .ConstructUsing(src => new VerifyOtpCodeCommand(new VerifyOtpRequestDto
+                {
+                    UserId = src.UserId,
+                    Code = src.Code
+                }));
+
+
+
             #endregion
 
             #region User
 
-            CreateMap<UserDto,UserViewModel>() .ReverseMap();
+            CreateMap<UserDto, UserViewModel>().ReverseMap();
             #endregion
         }
     }

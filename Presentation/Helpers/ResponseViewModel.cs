@@ -15,9 +15,9 @@ namespace Presentation.Helpers
             return new ResponseViewModel<T>(true, ErrorCode.None, message, data); // No error code for success
         }
 
-        public static ResponseViewModel<T> ErrorResult(string? message, T? data = default, ErrorCode errorCode = ErrorCode.None)
+        public static ResponseViewModel<T> ErrorResult(string? message, ErrorCode errorCode = ErrorCode.None)
         {
-            return new ResponseViewModel<T>(false, errorCode, message, data); // Set the error code as needed
+            return new ResponseViewModel<T>(false, errorCode, message); // Set the error code as needed
         }
     }
 }

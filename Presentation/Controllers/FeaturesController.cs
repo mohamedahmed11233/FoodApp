@@ -30,7 +30,7 @@ namespace Presentation.Controllers
 
             if (result)  return ResponseViewModel<bool>.SuccessResult(true);
 
-            return ResponseViewModel<bool>.ErrorResult("Failed to assign features", false);
+            return ResponseViewModel<bool>.ErrorResult("Failed to assign features");
         }
 
         [HttpPost("AssignRole")]
@@ -41,7 +41,7 @@ namespace Presentation.Controllers
             if (result)
                 return ResponseViewModel<bool>.SuccessResult(true);
 
-            return ResponseViewModel<bool>.ErrorResult("User not found", false, ErrorCode.UserNotFound);
+            return ResponseViewModel<bool>.ErrorResult("User not found", ErrorCode.UserNotFound);
         }
     }
 }
