@@ -12,6 +12,7 @@ using Application.CQRS.Auth.Queries.UserDataOperation;
 using Application.CQRS.Auth.Queries.OTP;
 using Application.CQRS.Auth.Commands.OTP;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Application.CQRS.Auth.Commands.ResetPassword;
 
 namespace Presentation.Controllers
 {
@@ -72,7 +73,19 @@ namespace Presentation.Controllers
             return ResponseViewModel<bool>.SuccessResult(true);
         }
 
-            
+
+        [HttpPost("reset-password")]
+
+        public async Task<ResponseViewModel<bool>> ResetPasswordAsync(ResetPasswordRequestVM requestViewModel)
+        {
+            var command = _mapper.Map<ResetPasswordCommand>(requestViewModel);
+            var isSuccess = await _mediator.Send(command);
+            if (!isSuccess)
+                return ResponseViewModel<bool>.ErrorResult("Failed to reset password.", ErrorCode.InvalidCredentials);
+            return ResponseViewModel<bool>.SuccessResult(true);
+        }
+
+
 
 
         [HttpGet("GetAllUsers")]

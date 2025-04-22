@@ -1,4 +1,5 @@
 ﻿using Application.CQRS.Auth.Commands.OTP;
+using Application.CQRS.Auth.Commands.ResetPassword;
 using Application.CQRS.Auth.Commend.RegisterUser;
 using Application.CQRS.Auth.Queries.LoginUser;
 using Application.Dtos;
@@ -60,8 +61,13 @@ namespace Presentation.MappingProfile
                     Code = src.Code
                 }));
 
-
-
+            CreateMap<ResetPasswordRequestVM, ResetPasswordCommand>()
+              .ConstructUsing(src => new ResetPasswordCommand(new ResetPasswordRequestDto
+              {
+                  UserId = src.UserId,
+                  OtpCode = src.OtpCode,
+                  NewPassword = src.NewPassword
+              }));
             #endregion
 
             #region User
