@@ -13,6 +13,7 @@ using Hotel_Reservation_System.Middleware;
 using Infrastructure.Context;
 using Infrastructure.IRepositories;
 using Infrastructure.Repositories;
+using Infrastructure.Service;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -87,6 +88,8 @@ namespace Presentation.ExtensionMethods
             Services.AddScoped<IAuthorizationHandler, FeatureAuthorizationHandler>();
 
             Services.AddScoped<IJwtGenerator, JwtGenerator>();
+            Services.AddScoped<IEmailService, EmailService>();
+
             return Services;
         }
     }

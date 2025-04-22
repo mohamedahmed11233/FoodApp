@@ -24,19 +24,17 @@ namespace Application.CQRS.Auth.Commands.ResetPassword
         public async Task<bool> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetByIdAsync(request.resetPassword.UserId);
-            if (user == null || string.IsNullOrEmpty(user.OtpSekretKey))
+          
+
+            if (user.ResetCode != request.resetPassword.OtpCode)
                 return false;
-
-            var secretKeyBytes = Base32Encoding.ToBytes(user.OtpSekretKey);
-            var totp = new Totp(secretKeyBytes);
-            var isValid = totp.VerifyTotp(request.resetPassword.OtpCode, out long timeStepMatched, VerificationWindow.RfcSpecifiedNetworkDelay);
-
-            if (!isValid)
-                return false;
-
+         
             // Change Password
             user.Password = _passwordHasher.HashPassword(user, request.resetPassword.NewPassword);
             await _userRepository.UpdateInclude(user, nameof(user.Password));
+
+            user.ResetCode = null;
+            await _userRepository.UpdateInclude(user, nameof(user.ResetCode));
 
             return true;
         }

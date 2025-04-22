@@ -15,7 +15,9 @@ namespace Domain.Models
         public string Email { get; set; } 
         public string Password { get; set; }
 
-        public string OtpSekretKey { get; set; }
+        public string? OtpSekretKey { get; set; }=string.Empty;
+        public string? ResetCode { get; set; } = string.Empty;  // New field for reset code
+
         public ICollection<Recipe>? Recipes { get; set; } = new HashSet<Recipe>();
         public Roles Role { get; set; } = Roles.User;
     }

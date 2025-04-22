@@ -13,6 +13,7 @@ using Application.CQRS.Auth.Queries.OTP;
 using Application.CQRS.Auth.Commands.OTP;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Application.CQRS.Auth.Commands.ResetPassword;
+using Application.CQRS.Auth.Commands.ForgetPassword;
 
 namespace Presentation.Controllers
 {
@@ -84,9 +85,14 @@ namespace Presentation.Controllers
                 return ResponseViewModel<bool>.ErrorResult("Failed to reset password.", ErrorCode.InvalidCredentials);
             return ResponseViewModel<bool>.SuccessResult(true);
         }
-
-
-
+        [HttpPost("forgot-password")]
+        public async Task<ResponseViewModel<bool>> ForgotPassword(string Email)
+        {
+            var isSuccess = await _mediator.Send(new RequestResetPasswordCommand(Email));
+            if (!isSuccess)
+                return ResponseViewModel<bool>.ErrorResult("User with the given email was not found.", ErrorCode.UserNotFound);
+            return ResponseViewModel<bool>.SuccessResult(true);
+        }
 
         [HttpGet("GetAllUsers")]
         public async Task<ResponseViewModel<IEnumerable<UserViewModel>>> GetAllUser()
