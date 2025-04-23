@@ -3,6 +3,8 @@ using Application.CQRS.Favorite.Commands.RemoveFavorite;
 using Application.CQRS.Favorite.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Helpers;
+using Presentation.ViewModel.Favorite;
 
 namespace Presentation.Controllers
 {
@@ -17,26 +19,40 @@ namespace Presentation.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddFavorite([FromBody] AddFavoriteCommand command)
+        [HttpPost("add")]
+        public async Task<ResponseViewModel<string>> AddFavorite([FromBody] AddFavoriteCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
+
+            return ResponseViewModel<string>.SuccessResult(result, "Favorite added successfully.");
         }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetFavorites(Guid userId)
+        [HttpPost("remove")]
+        public async Task<ResponseViewModel<string>> RemoveFavorite([FromBody] RemoveFavoriteCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            return ResponseViewModel<string>.SuccessResult(result, "Favorite removed successfully.");
+        }
+
+        [HttpGet("get-by-user/{userId}")]
+        public async Task<ResponseViewModel<List<FavoriteViewModel>>> GetFavoritesByUserId(int userId)
         {
             var result = await _mediator.Send(new GetFavoritesByUserIdQuery(userId));
-            return Ok(result);
-        }
 
-        [HttpDelete]
-        public async Task<IActionResult> RemoveFavorite([FromBody] RemoveFavoriteCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            // Map FavoriteDto to FavoriteViewModel
+            var mappedResult = result.Select(dto => new FavoriteViewModel
+            {
+                Id = dto.Id,
+                UserId = dto.UserId,
+                RecipeId = dto.RecipeId
+            }).ToList();
+
+            return ResponseViewModel<List<FavoriteViewModel>>.SuccessResult(mappedResult, "Favorites retrieved successfully.");
         }
+      
+        
+
     }
 
 }

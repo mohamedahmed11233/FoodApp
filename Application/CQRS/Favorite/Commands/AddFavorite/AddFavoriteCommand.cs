@@ -9,8 +9,8 @@ namespace Application.CQRS.Favorite.Commands.AddFavorite
 {
     public class AddFavoriteCommand : IRequest<string>
     {
-        public Guid UserId { get; set; }
-        public Guid RecipeId { get; set; }
+        public int UserId { get; set; }
+        public int RecipeId { get; set; }
     }
 
 }

@@ -9,10 +9,10 @@ namespace Application.CQRS.Favorite.Commands.RemoveFavorite
 {
     public class RemoveFavoriteCommand : IRequest<string>
     {
-        public Guid UserId { get; set; }
-        public Guid RecipeId { get; set; }
+        public int UserId { get; set; }
+        public int RecipeId { get; set; }
 
-        public RemoveFavoriteCommand(Guid userId, Guid recipeId)
+        public RemoveFavoriteCommand(int userId, int recipeId)
         {
             UserId = userId;
             RecipeId = recipeId;

@@ -8,8 +8,8 @@ namespace Application.Dtos.Favorite
 {
     public class FavoriteDto
     {
-        public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-        public Guid RecipeId { get; set; }
+        public int  Id { get; set; }
+        public int  UserId { get; set; }
+        public int RecipeId { get; set; }
     }
 }

@@ -8,14 +8,16 @@ using System.Threading.Tasks;
 
 namespace Application.CQRS.Favorite.Queries
 {
-    public class GetFavoritesByUserIdQuery : IRequest<List<FavoriteDto>>
+    public class GetFavoritesByUserIdQuery : IRequest<List<FavoriteDto>>, IBaseRequest
     {
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
 
-        public GetFavoritesByUserIdQuery(Guid userId)
+        // Add a parameterized constructor to resolve the CS7036 error  
+        public GetFavoritesByUserIdQuery(int userId)
         {
             UserId = userId;
         }
     }
+
 
 }
