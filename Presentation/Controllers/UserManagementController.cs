@@ -13,12 +13,12 @@ namespace Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FeaturesController : ControllerBase
+    public class UserManagementController : ControllerBase
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public FeaturesController(IMediator mediator , IMapper mapper)
+        public UserManagementController(IMediator mediator , IMapper mapper)
         {
             _mediator = mediator;
             _mapper = mapper;
@@ -42,6 +42,21 @@ namespace Presentation.Controllers
                 return ResponseViewModel<bool>.SuccessResult(true);
 
             return ResponseViewModel<bool>.ErrorResult("User not found", ErrorCode.UserNotFound);
+        }
+        [HttpGet("GetAllUsers")]
+        public async Task<ResponseViewModel<IEnumerable<UserViewModel>>> GetAllUser()
+        {
+            var user = await _mediator.Send(new GetAllUserQuery());
+            var result = _mapper.Map<IEnumerable<UserViewModel>>(user);
+            return ResponseViewModel<IEnumerable<UserViewModel>>.SuccessResult(result);
+        }
+
+        [HttpGet("GetUser")]
+        public async Task<ResponseViewModel<UserViewModel>> GetUserByID(int Id)
+        {
+            var user = await _mediator.Send(new GetUserByIdQuery(Id));
+            var result = _mapper.Map<UserViewModel>(user);
+            return ResponseViewModel<UserViewModel>.SuccessResult(result);
         }
     }
 }

@@ -94,21 +94,7 @@ namespace Presentation.Controllers
             return ResponseViewModel<bool>.SuccessResult(true);
         }
 
-        [HttpGet("GetAllUsers")]
-        public async Task<ResponseViewModel<IEnumerable<UserViewModel>>> GetAllUser()
-        {
-            var user = await _mediator.Send(new GetAllUserQuery());
-            var result = _mapper.Map<IEnumerable<UserViewModel>>(user);
-            return ResponseViewModel<IEnumerable<UserViewModel>>.SuccessResult(result);
-        }
-
-        [HttpGet("GetUser")]
-        public async Task<ResponseViewModel<UserViewModel>> GetUserByID(int Id)
-        {
-            var user = await _mediator.Send(new GetUserByIdQuery(Id));
-            var result = _mapper.Map<UserViewModel>(user);
-            return ResponseViewModel<UserViewModel>.SuccessResult(result);
-        }
+     
 
     }
 }
