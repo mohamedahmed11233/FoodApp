@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Presentation.Helpers;
 using System.Reflection;
 
 namespace Presentation.ExtensionMethods
@@ -31,6 +32,7 @@ namespace Presentation.ExtensionMethods
             Services.AddEndpointsApiExplorer();
             Services.AddSwaggerGen();
             Services.AddScoped<GlobalTransactionMiddleware>();
+            Services.AddScoped<RabbitMQPublisherService>();
             Services.AddDbContext<FoodAppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             Services.AddScoped<IUnitOfWork, UnitOfWork>();

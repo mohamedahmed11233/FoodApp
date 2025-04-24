@@ -19,11 +19,13 @@ namespace Presentation.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
+        private readonly RabbitMQPublisherService _rabbitMQ;
 
-        public RecipeController(IMediator mediator , IMapper mapper )
+        public RecipeController(IMediator mediator , IMapper mapper , RabbitMQPublisherService rabbitMQ )
         {
             this._mediator = mediator;
             this._mapper = mapper;
+            this._rabbitMQ = rabbitMQ;
         }
         [HttpPost("AddRecipe")]
         public async Task<ResponseViewModel<AddRecipeViewModel>> AddRecipe(AddRecipeViewModel model)
@@ -131,6 +133,16 @@ namespace Presentation.Controllers
             (
                 success: true,
                 data: recipeViewModel
+            );
+        }
+        [HttpPost]
+        public async Task<ResponseViewModel<string>> PublishMessage()
+        {
+            await _rabbitMQ.PublishChannel("Hello from RabbitMQ");
+            return new ResponseViewModel<string>
+            (
+                success: true,
+                data: "Message published successfully"
             );
         }
     }
