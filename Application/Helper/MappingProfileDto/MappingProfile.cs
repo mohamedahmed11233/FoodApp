@@ -15,7 +15,6 @@ namespace Application.Helper.MappingProfileDto
         public MappingProfile() 
         {
             CreateMap<User, UserDto>().ReverseMap();
-            CreateMap<Favorite, FavoriteDto>().ReverseMap();
         }
     }
 }

@@ -26,6 +26,8 @@ namespace Application.CQRS.Recipe.Commands
 
         public async Task<AddRecipeDto> Handle(AddRecipeCommand request, CancellationToken cancellationToken)
         {
+            if (request.Model is null) return null!;
+
             var recipe = new Domain.Models.Recipe 
             {
                 Name = request.Model.Name ,
@@ -34,7 +36,7 @@ namespace Application.CQRS.Recipe.Commands
                 ImageUrl = request.Model.ImageUrl,
                 Discount = request.Model.Discount,
                
-                Quantity = 1
+                Quantity = 1,
             };
            await _unitOfWork.Repository<Domain.Models.Recipe>().AddAsync(recipe);
            await _unitOfWork.SaveChangesAsync();

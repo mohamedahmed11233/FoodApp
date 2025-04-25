@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.IRepositories
 {
-   public interface IUnitOfWork : IDisposable
+   public interface IUnitOfWork: IDisposable
     {
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity;
         public Task<int> SaveChangesAsync();

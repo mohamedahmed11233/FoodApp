@@ -28,6 +28,7 @@ namespace Presentation.Controllers
         [HttpPost("AddRecipe")]
         public async Task<ResponseViewModel<AddRecipeViewModel>> AddRecipe(AddRecipeViewModel model)
         {
+            
             var recipeDto = _mapper.Map<AddRecipeDto>(model);
 
             var result = await _mediator.Send(new AddRecipeCommand(recipeDto));

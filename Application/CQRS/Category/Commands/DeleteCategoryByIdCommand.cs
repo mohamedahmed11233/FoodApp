@@ -11,7 +11,7 @@ namespace Application.CQRS.Category.Commands
     public sealed record DeleteCategoryByIdCommand(int Id) : IRequest<bool>;
     public class DeleteCategoryByIdCommandHandler : IRequestHandler<DeleteCategoryByIdCommand, bool>
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly    IUnitOfWork _unitOfWork;
         public DeleteCategoryByIdCommandHandler(IUnitOfWork unitOfWork)
         {
            _unitOfWork = unitOfWork;

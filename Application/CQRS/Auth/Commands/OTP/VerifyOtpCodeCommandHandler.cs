@@ -21,7 +21,7 @@ namespace Application.CQRS.Auth.Commands.OTP
         public async Task<bool> Handle(VerifyOtpCodeCommand request, CancellationToken cancellationToken)
         {
             var user =await _userrepository.GetByIdAsync(request.VerifyOtp.UserId);
-            if (user == null || string.IsNullOrEmpty(user.OtpSekretKey))
+            if (user is null || string.IsNullOrEmpty(user.OtpSekretKey))
                 return false;
 
             var secretKeyBytes = Base32Encoding.ToBytes(user.OtpSekretKey);

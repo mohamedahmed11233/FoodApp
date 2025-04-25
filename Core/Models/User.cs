@@ -20,7 +20,6 @@ namespace Domain.Models
 
         public ICollection<Recipe>? Recipes { get; set; } = new HashSet<Recipe>();
         public Roles Role { get; set; } = Roles.User;
-        public ICollection<Favorite>? Favorites { get; set; } = new HashSet<Favorite>();
     }
 
 }

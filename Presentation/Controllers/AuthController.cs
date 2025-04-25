@@ -7,11 +7,8 @@ using Domain.Enum.SharedEnums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Helpers;
-using Presentation.ViewModel;
-using Application.CQRS.Auth.Queries.UserDataOperation;
 using Application.CQRS.Auth.Queries.OTP;
 using Application.CQRS.Auth.Commands.OTP;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Application.CQRS.Auth.Commands.ResetPassword;
 using Application.CQRS.Auth.Commands.ForgetPassword;
 

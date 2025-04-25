@@ -17,5 +17,6 @@ namespace Application.Dtos.Recipe
         public decimal Discount { get; set; }
         public string Category { get; set; } 
         public UserDto User { get; set; }
+        public bool IsFavorite { get; set; }
     }
 }

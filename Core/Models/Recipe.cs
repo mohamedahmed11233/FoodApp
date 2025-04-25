@@ -16,10 +16,7 @@ namespace Domain.Models
         public int Quantity { get; set; }
         public string ImageUrl { get; set; } 
         public decimal Discount { get; set; }
-        public int CategoryId { get; set; }
-        [ForeignKey("CategoryId")]
-        public Category Category { get; set; } = new Category();
-
+        public bool IsFavorite { get; set; } = false;
     }
 
 
