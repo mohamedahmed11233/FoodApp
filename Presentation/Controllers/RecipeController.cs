@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Helpers;
+using Presentation.ViewModel.RabbitMQ;
 using Presentation.ViewModel.Recipes;
 
 namespace Presentation.Controllers
@@ -21,7 +22,7 @@ namespace Presentation.Controllers
         private readonly IMapper _mapper;
         private readonly RabbitMQPublisherService _rabbitMQ;
 
-        public RecipeController(IMediator mediator , IMapper mapper , RabbitMQPublisherService rabbitMQ )
+        public RecipeController(IMediator mediator , IMapper mapper , RabbitMQPublisherService rabbitMQ)
         {
             this._mediator = mediator;
             this._mapper = mapper;
@@ -136,14 +137,55 @@ namespace Presentation.Controllers
             );
         }
         [HttpPost]
-        public async Task<ResponseViewModel<string>> PublishMessage()
+        public  Task<ResponseViewModel<string>> PublishMessage( string message)
         {
-            await _rabbitMQ.PublishChannel("Hello from RabbitMQ");
-            return new ResponseViewModel<string>
+             _rabbitMQ.PublishMessage(message);
+            return Task.FromResult( new ResponseViewModel<string>
             (
                 success: true,
                 data: "Message published successfully"
-            );
+            ));
         }
+
+
+
+        [HttpPost("AddRecipeWithRabbitMQ")]
+        public async Task<ResponseViewModel<AddRecipeViewModel>> AdddRecipe(AddRecipeViewModel model)
+        {
+            var recipeDto = _mapper.Map<AddRecipeDto>(model);
+
+            var result = await _mediator.Send(new AddRecipeCommand(recipeDto));
+            if (result is null)
+            {
+                return new ResponseViewModel<AddRecipeViewModel>(
+                    success: false,
+                    message: "Failed to add recipe",
+                    data: null,
+                    errorCode: Domain.Enum.SharedEnums.ErrorCode.InvalidRecipeData
+                );
+            }
+            var recipeMessage = new AddRecipeMessage
+            {
+                Date = DateTime.Now,
+                Action = "Add Recipe",
+                CategoryName = model.Category,
+                RecipeName = model.Name,
+                Type = nameof(AddRecipeMessage),
+            };
+            var message = Newtonsoft.Json.JsonConvert.SerializeObject(recipeMessage);
+            _rabbitMQ.PublishMessage(message);
+            var recipeViewModel = _mapper.Map<AddRecipeViewModel>(result);
+            return new ResponseViewModel<AddRecipeViewModel>
+            (
+                success: true,
+                message: "Recipe Added Successfully",
+                data: model
+            );
+            
+
+           
+
+        }
+
     }
 }

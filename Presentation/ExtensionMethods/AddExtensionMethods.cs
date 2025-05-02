@@ -19,7 +19,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presentation.Helpers;
+using RabbitMQ.Client;
 using System.Reflection;
+using System.Threading.Channels;
 
 namespace Presentation.ExtensionMethods
 {
@@ -32,7 +34,6 @@ namespace Presentation.ExtensionMethods
             Services.AddEndpointsApiExplorer();
             Services.AddSwaggerGen();
             Services.AddScoped<GlobalTransactionMiddleware>();
-            Services.AddScoped<RabbitMQPublisherService>();
             Services.AddDbContext<FoodAppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -66,7 +67,18 @@ namespace Presentation.ExtensionMethods
             Services.AddScoped<IRequestHandler<RegisterUserCommand, RegisterResponseDto>, RegisterUserCommandHandler>();
             Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             Services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
-            
+            Services.AddSingleton<RabbitMQPublisherService>();
+            Services.AddSingleton<IConnection>(sp =>
+            {
+                var factory = new ConnectionFactory { HostName = "localhost" }; // Adjust settings as needed
+                return factory.CreateConnectionAsync().GetAwaiter().GetResult();
+            });
+         
+            Services.AddSingleton<IChannel>(sp =>
+            {
+                var connection = sp.GetRequiredService<IConnection>();
+                return connection.CreateChannelAsync().GetAwaiter().GetResult();
+            });
             Services.AddHttpContextAccessor();
 
             Services.AddTransient<FeatureAuthorizationHandler>();

@@ -49,7 +49,7 @@ namespace Presentation.Controllers
 
             if (result.IsSucess)
                 return ResponseViewModel<RegisterResponseDto>.SuccessResult(result);
-            return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, null, ErrorCode.FailedLogin);
+            return ResponseViewModel<RegisterResponseDto>.ErrorResult(result.Message, ErrorCode.FailedLogin);
         }
 
         [HttpGet("generate-otp-secret")]
@@ -57,7 +57,7 @@ namespace Presentation.Controllers
         {
             var secretKeyDto = await _mediator.Send(new GenerateSecretKeyQuery(userId));
             if (secretKeyDto is null)
-                return ResponseViewModel<GenerateSecretKeyDTO>.ErrorResult("Failed to generate OTP secret key.", null, ErrorCode.NotFound);
+                return ResponseViewModel<GenerateSecretKeyDTO>.ErrorResult("Failed to generate OTP secret key.", ErrorCode.NotFound);
             return ResponseViewModel<GenerateSecretKeyDTO>.SuccessResult(secretKeyDto);
         }
 
@@ -67,7 +67,7 @@ namespace Presentation.Controllers
             var command = _mapper.Map<VerifyOtpCodeCommand>(requestViewModel);
             var isVerified = await _mediator.Send(command);
             if (!isVerified)
-                return ResponseViewModel<bool>.ErrorResult("Invalid OTP code.", false, ErrorCode.InvalidCredentials);
+                return ResponseViewModel<bool>.ErrorResult("Invalid OTP code."  , ErrorCode.InvalidCredentials);
 
             return ResponseViewModel<bool>.SuccessResult(true);
         }
