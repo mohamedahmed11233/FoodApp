@@ -150,7 +150,7 @@ namespace Presentation.Controllers
 
 
         [HttpPost("AddRecipeWithRabbitMQ")]
-        public async Task<ResponseViewModel<AddRecipeViewModel>> AdddRecipe(AddRecipeViewModel model)
+        public async Task<ResponseViewModel<AddRecipeViewModel>> AddRecipeWithRabbitMq(string message , AddRecipeViewModel model)
         {
             var recipeDto = _mapper.Map<AddRecipeDto>(model);
 
@@ -172,8 +172,8 @@ namespace Presentation.Controllers
                 RecipeName = model.Name,
                 Type = nameof(AddRecipeMessage),
             };
-            var message = Newtonsoft.Json.JsonConvert.SerializeObject(recipeMessage);
-            _rabbitMQ.PublishMessage(message);
+            var Message = Newtonsoft.Json.JsonConvert.SerializeObject(recipeMessage);
+            _rabbitMQ.PublishMessage(Message);
             var recipeViewModel = _mapper.Map<AddRecipeViewModel>(result);
             return new ResponseViewModel<AddRecipeViewModel>
             (

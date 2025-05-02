@@ -1,4 +1,5 @@
-﻿using Presentation.ViewModel.RabbitMQ;
+﻿using MediatR;
+using Presentation.ViewModel.RabbitMQ;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -9,12 +10,13 @@ namespace Presentation.Helpers
     {
         private readonly IChannel _channel;
         private readonly IConnection _connection;
-
-        public RabbitMQConsumerService()
+        private readonly IMediator _mediator;
+        public RabbitMQConsumerService(IMediator mediator)
         {
             var factory = new ConnectionFactory() { HostName = "localhost" };
             _connection = factory.CreateConnectionAsync().Result;
             _channel = _connection.CreateChannelAsync().Result;
+            _mediator = mediator;
 
         }
 
@@ -32,6 +34,8 @@ namespace Presentation.Helpers
             {
                 var body = Encoding.UTF8.GetString(@event.Body.ToArray());
                 var message = GetMessage(body);
+
+                await InvokeConsumer(message);
                 await _channel.BasicAckAsync(@event.DeliveryTag, false);
             }
             catch (Exception ex) when (ex is NullReferenceException) 
@@ -44,12 +48,24 @@ namespace Presentation.Helpers
             }
         }
 
+        private async Task InvokeConsumer(BaseMessage message)
+        {
+             message.Type = message.Type.Replace("Message",  "Consumer");
+            var NameSpace = "Presentation.ViewModel.RabbitMQ";
+            var type = Type.GetType($"{NameSpace}.{message.Type},Presentation");
+            if (type is null) throw new NullReferenceException("Type not found");
+            var Consumer = Activator.CreateInstance(type , _mediator);
+            var method  = type.GetMethod("ConsumeAsync");
+            if (method is null) throw new NullReferenceException("Method not found");
+            method.Invoke(Consumer, new object[] { message });
+        }
+
         private BaseMessage GetMessage(string body)
         {
            var JsonObject= Newtonsoft.Json.Linq.JObject.Parse(body);
            var TypeName = JsonObject["Type"].ToString();
            var Namespace = "Presentation.ViewModel.RabbitMQ";
-           Type type = Type.GetType($"{Namespace}.{TypeName},Presentation");
+           var type = Type.GetType($"{Namespace}.{TypeName},Presentation");
             if (type is null) throw new NullReferenceException("Type not found");
             
             var baseMEssage = Newtonsoft.Json.JsonConvert.DeserializeObject(body, type) as BaseMessage;
