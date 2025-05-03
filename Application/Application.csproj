@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Core\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CQRS\Favorite\" />
+  </ItemGroup>
+
 </Project>
