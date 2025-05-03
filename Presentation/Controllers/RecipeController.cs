@@ -21,12 +21,14 @@ namespace Presentation.Controllers
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
         private readonly RabbitMQPublisherService _rabbitMQ;
+        private readonly ILogger<RecipeController> _logger;
 
-        public RecipeController(IMediator mediator , IMapper mapper , RabbitMQPublisherService rabbitMQ)
+        public RecipeController(IMediator mediator , IMapper mapper , RabbitMQPublisherService rabbitMQ , ILogger<RecipeController> logger)
         {
             this._mediator = mediator;
             this._mapper = mapper;
             this._rabbitMQ = rabbitMQ;
+            this._logger = logger;
         }
         [HttpPost("AddRecipe")]
         public async Task<ResponseViewModel<AddRecipeViewModel>> AddRecipe(AddRecipeViewModel model)
@@ -36,12 +38,15 @@ namespace Presentation.Controllers
             var result = await _mediator.Send(new AddRecipeCommand(recipeDto));
             if (result is null)
             {
+                _logger.LogInformation("Failed to add recipe: {Model}", model);          // Log the error
+
                 return new ResponseViewModel<AddRecipeViewModel>(
                     success: false,
                     message: "Failed to add recipe",
                     data: null,
-                    errorCode: Domain.Enum.SharedEnums.ErrorCode.InvalidRecipeData // Adjust this if a specific error code is required
+                    errorCode: Domain.Enum.SharedEnums.ErrorCode.InvalidRecipeData  // Adjust this if a specific error code is required
                 );
+
             }
 
             var recipeViewModel = _mapper.Map<AddRecipeViewModel>(result);

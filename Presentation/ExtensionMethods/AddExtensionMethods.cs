@@ -8,19 +8,24 @@ using Application.Repositories;
 using Application.service;
 using Domain.Enum.SharedEnums;
 using Domain.Models;
+using Hangfire;
 using Hotel_Reservation_System.Error;
 using Hotel_Reservation_System.Middleware;
 using Infrastructure.Context;
 using Infrastructure.IRepositories;
 using Infrastructure.Repositories;
+using Infrastructure.service;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Presentation.Helpers;
 using RabbitMQ.Client;
 using System.Reflection;
+using System.Text;
 using System.Threading.Channels;
 
 namespace Presentation.ExtensionMethods
@@ -101,6 +106,33 @@ namespace Presentation.ExtensionMethods
             Services.AddScoped<IAuthorizationHandler, FeatureAuthorizationHandler>();
 
             Services.AddScoped<IJwtGenerator, JwtGenerator>();
+            Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme )
+              .AddJwtBearer(options =>
+              {
+                  options.TokenValidationParameters = new()
+                  {
+                      ValidateIssuer = true,
+                      ValidateAudience = true,
+                      ValidateLifetime = true,
+                      ValidateIssuerSigningKey = true,
+                      ValidIssuer = configuration["Jwt:Issuer"],
+                      ValidAudience = configuration["Jwt:Audience"],
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
+                  };
+              });
+
+            Services.AddHostedService<BackgroundJobService>();
+            Services.AddHostedService<RabbitMQConsumerService>();
+            Services.AddHangfire(opt =>
+            {
+                opt.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"), new Hangfire.SqlServer.SqlServerStorageOptions
+                {
+                    CommandTimeout = TimeSpan.FromMinutes(2),
+                    QueuePollInterval = TimeSpan.FromSeconds(15),
+                    PrepareSchemaIfNecessary = true,
+                });
+            });
+            Services.AddHangfireServer();
             return Services;
         }
     }

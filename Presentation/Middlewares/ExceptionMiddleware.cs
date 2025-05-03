@@ -1,5 +1,6 @@
 ﻿using Hotel_Reservation_System.Error;
 using Microsoft.AspNetCore.Http;
+using Presentation.ExtensionMethods;
 using System.Net;
 using System.Text.Json;
 
@@ -26,7 +27,8 @@ namespace Hotel_Reservation_System.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[{Middleware}] {ExceptionType}: {Message}", nameof(ExceptionMiddleware), ex.GetType().Name, ex.Message);
+
+                AddSerilog.AddSerilogLogger(httpContext.RequestServices.GetRequiredService<ILoggingBuilder>(),httpContext.RequestServices.GetRequiredService<IConfiguration>() ,httpContext.RequestServices.GetRequiredService<WebApplicationBuilder>());
 
                 httpContext.Response.StatusCode = ex switch
                 {

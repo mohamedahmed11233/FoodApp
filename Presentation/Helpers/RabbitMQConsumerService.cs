@@ -17,7 +17,6 @@ namespace Presentation.Helpers
             _connection = factory.CreateConnectionAsync().Result;
             _channel = _connection.CreateChannelAsync().Result;
             _mediator = mediator;
-
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -48,16 +47,18 @@ namespace Presentation.Helpers
             }
         }
 
-        private async Task InvokeConsumer(BaseMessage message)
+        private Task InvokeConsumer(BaseMessage message)
         {
-             message.Type = message.Type.Replace("Message",  "Consumer");
+            message.Type =  message.Type.Replace("Message",  "Consumer");
             var NameSpace = "Presentation.ViewModel.RabbitMQ";
             var type = Type.GetType($"{NameSpace}.{message.Type},Presentation");
             if (type is null) throw new NullReferenceException("Type not found");
             var Consumer = Activator.CreateInstance(type , _mediator);
             var method  = type.GetMethod("ConsumeAsync");
             if (method is null) throw new NullReferenceException("Method not found");
+           
             method.Invoke(Consumer, new object[] { message });
+            return Task.CompletedTask;
         }
 
         private BaseMessage GetMessage(string body)
@@ -77,7 +78,7 @@ namespace Presentation.Helpers
 
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken = default)
         {
             await _channel.CloseAsync();
             await _connection.CloseAsync();
