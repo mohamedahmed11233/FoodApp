@@ -11,6 +11,8 @@ namespace Presentation.ExtensionMethods
             Logging.ClearProviders();
 
             Serilog.Log.Logger = new LoggerConfiguration().WriteTo.Seq("http://localhost:5341")
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithMachineName()
                .WriteTo.MSSqlServer
             (
               connectionString:configuration.GetConnectionString("DefaultConnection") ,
