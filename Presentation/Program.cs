@@ -1,3 +1,4 @@
+using Hangfire;
 using Hotel_Reservation_System.Middleware;
 using Presentation.ExtensionMethods;
 using Serilog;
@@ -25,7 +26,7 @@ namespace Presentation
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseMiddleware<GlobalTransactionMiddleware>();
             app.UseHttpsRedirection();
-
+            app.UseHangfireDashboard("/hangfire");
             app.UseAuthorization();
 
 

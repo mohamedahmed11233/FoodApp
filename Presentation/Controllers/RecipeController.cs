@@ -1,15 +1,13 @@
 ﻿using Application.CQRS.Recipe.Commands;
 using Application.CQRS.Recipe.Queries;
-using Application.Dtos;
 using Application.Dtos.Recipe;
 using AutoMapper;
-using Domain.Enum.SharedEnums;
-using Hotel_Reservation_System.Error;
+using Domain.Models;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Presentation.Helpers;
-using Presentation.ViewModel.RabbitMQ;
 using Presentation.ViewModel.Recipes;
 
 namespace Presentation.Controllers
@@ -20,15 +18,18 @@ namespace Presentation.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        private readonly RabbitMQPublisherService _rabbitMQ;
         private readonly ILogger<RecipeController> _logger;
+        private readonly IMemoryCache _cache;
+        private readonly IDistributedCache _distributedCache;
 
-        public RecipeController(IMediator mediator , IMapper mapper , RabbitMQPublisherService rabbitMQ , ILogger<RecipeController> logger)
+        public RecipeController(IMediator mediator , IMapper mapper
+            ,ILogger<RecipeController> logger , IMemoryCache cache , IDistributedCache distributedCache)
         {
             this._mediator = mediator;
             this._mapper = mapper;
-            this._rabbitMQ = rabbitMQ;
             this._logger = logger;
+            this._cache = cache;
+            this._distributedCache = distributedCache;
         }
         [HttpPost("AddRecipe")]
         public async Task<ResponseViewModel<AddRecipeViewModel>> AddRecipe(AddRecipeViewModel model)
@@ -142,55 +143,30 @@ namespace Presentation.Controllers
             );
         }
         [HttpPost]
-        public  Task<ResponseViewModel<string>> PublishMessage( string message)
+        public ActionResult<string> TestCache()
         {
-             _rabbitMQ.PublishMessage(message);
-            return Task.FromResult( new ResponseViewModel<string>
-            (
-                success: true,
-                data: "Message published successfully"
-            ));
-        }
-
-
-
-        [HttpPost("AddRecipeWithRabbitMQ")]
-        public async Task<ResponseViewModel<AddRecipeViewModel>> AddRecipeWithRabbitMq(string message , AddRecipeViewModel model)
-        {
-            var recipeDto = _mapper.Map<AddRecipeDto>(model);
-
-            var result = await _mediator.Send(new AddRecipeCommand(recipeDto));
-            if (result is null)
-            {
-                return new ResponseViewModel<AddRecipeViewModel>(
-                    success: false,
-                    message: "Failed to add recipe",
-                    data: null,
-                    errorCode: Domain.Enum.SharedEnums.ErrorCode.InvalidRecipeData
-                );
-            }
-            var recipeMessage = new AddRecipeMessage
-            {
-                Date = DateTime.Now,
-                Action = "Add Recipe",
-                CategoryName = model.Category,
-                RecipeName = model.Name,
-                Type = nameof(AddRecipeMessage),
-            };
-            var Message = Newtonsoft.Json.JsonConvert.SerializeObject(recipeMessage);
-            _rabbitMQ.PublishMessage(Message);
-            var recipeViewModel = _mapper.Map<AddRecipeViewModel>(result);
-            return new ResponseViewModel<AddRecipeViewModel>
-            (
-                success: true,
-                message: "Recipe Added Successfully",
-                data: model
-            );
             
-
-           
-
+            var recipe = new Recipe { Description = "value" , Id = 1 };
+            var data = Newtonsoft.Json.JsonConvert.SerializeObject(recipe);
+            _distributedCache.SetString("noha" , data , new DistributedCacheEntryOptions 
+            {
+                AbsoluteExpirationRelativeToNow =TimeSpan.FromMinutes(3) 
+            });
+            return "Ok";
         }
+        [HttpGet]
+        public ActionResult<string> GetCache()
+        {
+            if (_cache.TryGetValue("Noha From Caching",out string? value))
+            
+                return Ok(value);    
+
+            else
+            {
+                return NotFound("Cache not found");
+            }            
+        }
+
 
     }
 }

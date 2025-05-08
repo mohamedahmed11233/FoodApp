@@ -32,7 +32,7 @@ namespace Presentation.ExtensionMethods
 {
     public static class AddExtensionMethods
     {
-        public static IServiceCollection AddDependencyInjectionMethods(this IServiceCollection Services , IConfiguration configuration)
+        public static IServiceCollection AddDependencyInjectionMethods(this IServiceCollection Services ,IConfiguration configuration)
         {
             Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -68,6 +68,7 @@ namespace Presentation.ExtensionMethods
             });
             #endregion
             Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            
 
             Services.AddScoped<IRequestHandler<RegisterUserCommand, RegisterResponseDto>, RegisterUserCommandHandler>();
             Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -89,8 +90,24 @@ namespace Presentation.ExtensionMethods
             Services.AddTransient<FeatureAuthorizationHandler>();
             Services.AddAuthorization();
             Services.AddControllersWithViews();
+            Services.AddStackExchangeRedisCache(opt =>
+            { opt.Configuration = "redis-19177.c16.us-east-1-3.ec2.redns.redis-cloud.com,Password = ycAxPeersm2FneXOC69bW5mzMZwAFdol";
+              opt.InstanceName = "memory";
+            });
+            Services.AddCap(options =>
+            {
+                options.UseEntityFramework<FoodAppDbContext>();
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.UseRabbitMQ(rabbitMQ =>
+                {
+                    rabbitMQ.HostName = "localhost";
+                    rabbitMQ.UserName = "guest";
+                    rabbitMQ.Password = "guest";
+                    rabbitMQ.Port = 15672;
+                    rabbitMQ.ExchangeName = "cap.default.router";
 
-
+                });
+            });
             Services.AddAuthorization(options =>
             {
                 foreach (var feature in Enum.GetValues(typeof(FeatureEnum)))
@@ -120,7 +137,7 @@ namespace Presentation.ExtensionMethods
                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
                   };
               });
-
+            Services.AddMemoryCache();
             Services.AddHostedService<BackgroundJobService>();
             Services.AddHostedService<RabbitMQConsumerService>();
             Services.AddHangfire(opt =>

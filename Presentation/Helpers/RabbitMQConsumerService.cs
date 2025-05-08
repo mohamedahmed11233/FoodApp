@@ -23,7 +23,7 @@ namespace Presentation.Helpers
         {
             var Consumer = new AsyncEventingBasicConsumer(_channel);
             Consumer.ReceivedAsync += Consumer_ReceivedAsync;
-            _channel.BasicConsumeAsync("newQueue", false , Consumer);
+            _channel.BasicConsumeAsync("newQueue",false,Consumer);
             return Task.CompletedTask;
         }
 
@@ -41,7 +41,7 @@ namespace Presentation.Helpers
             {
                 await _channel.BasicRejectAsync(@event.DeliveryTag, true);
             }
-            catch(Exception ex)
+            catch(Exception)     
             {
                 await _channel.BasicRejectAsync(@event.DeliveryTag, false);
             }
